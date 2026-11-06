@@ -2963,6 +2963,11 @@ export interface Nursery {
 	 */
 	noArrayForEach?: NoArrayForEachConfiguration;
 	/**
+	 * Disallow calling array methods on the arguments object.
+	 * See https://biomejs.dev/linter/rules/no-array-methods-on-arguments
+	 */
+	noArrayMethodsOnArguments?: NoArrayMethodsOnArgumentsConfiguration;
+	/**
 	 * Disallow sorting an array only to read its smallest or largest value.
 	 * See https://biomejs.dev/linter/rules/no-array-sort-for-min-max
 	 */
@@ -3008,6 +3013,11 @@ export interface Nursery {
 	 */
 	noConsoleSpaces?: NoConsoleSpacesConfiguration;
 	/**
+	 * Disallow conditions that are always true, can never be true, or contain a check with no effect.
+	 * See https://biomejs.dev/linter/rules/no-constant-comparisons
+	 */
+	noConstantComparisons?: NoConstantComparisonsConfiguration;
+	/**
 	 * Disallow names that start or end with an underscore.
 	 * See https://biomejs.dev/linter/rules/no-dangling-underscore
 	 */
@@ -3032,6 +3042,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/no-eager-array-methods-in-loops
 	 */
 	noEagerArrayMethodsInLoops?: NoEagerArrayMethodsInLoopsConfiguration;
+	/**
+	 * Disallow operations with zero that always result in zero.
+	 * See https://biomejs.dev/linter/rules/no-erasing-operation
+	 */
+	noErasingOperation?: NoErasingOperationConfiguration;
 	/**
 	 * Enforce a maximum depth that blocks can be nested.
 	 * See https://biomejs.dev/linter/rules/no-excessive-nested-blocks
@@ -3138,6 +3153,11 @@ export interface Nursery {
 	 */
 	noMisusedPromises?: NoMisusedPromisesConfiguration;
 	/**
+	 * Disallow negating the result of Array#some() or Array#every().
+	 * See https://biomejs.dev/linter/rules/no-negated-array-predicate
+	 */
+	noNegatedArrayPredicate?: NoNegatedArrayPredicateConfiguration;
+	/**
 	 * Disallow negated expressions on the left side of an equality check.
 	 * See https://biomejs.dev/linter/rules/no-negation-in-equality-check
 	 */
@@ -3167,6 +3187,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/no-null
 	 */
 	noNull?: NoNullConfiguration;
+	/**
+	 * Disallow number method arguments that are outside the range the method accepts.
+	 * See https://biomejs.dev/linter/rules/no-number-argument-out-of-range
+	 */
+	noNumberArgumentOutOfRange?: NoNumberArgumentOutOfRangeConfiguration;
 	/**
 	 * Disallow calling Object without arguments to create an empty object.
 	 * See https://biomejs.dev/linter/rules/no-object-constructor
@@ -3253,6 +3278,11 @@ export interface Nursery {
 	 */
 	noSelfNestedLayer?: NoSelfNestedLayerConfiguration;
 	/**
+	 * Disallow the same code at the start or end of every branch of an if statement.
+	 * See https://biomejs.dev/linter/rules/no-shared-branch-code
+	 */
+	noSharedBranchCode?: NoSharedBranchCodeConfiguration;
+	/**
 	 * Disallow animation and transition times that are shorter than a configured minimum.
 	 * See https://biomejs.dev/linter/rules/no-short-time-values
 	 */
@@ -3262,6 +3292,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/no-single-promise-in-promise-methods
 	 */
 	noSinglePromiseInPromiseMethods?: NoSinglePromiseInPromiseMethodsConfiguration;
+	/**
+	 * Disallow subtracting two values only to compare the result with 0.
+	 * See https://biomejs.dev/linter/rules/no-subtraction-comparison
+	 */
+	noSubtractionComparison?: NoSubtractionComparisonConfiguration;
 	/**
 	 * Disallow addEventListener in Svelte files.
 	 * See https://biomejs.dev/linter/rules/no-svelte-add-event-listener
@@ -3292,6 +3327,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/no-svelte-export-let
 	 */
 	noSvelteExportLet?: NoSvelteExportLetConfiguration;
+	/**
+	 * Disallow ignoring the function returned by a store's subscribe() method.
+	 * See https://biomejs.dev/linter/rules/no-svelte-ignored-unsubscribe
+	 */
+	noSvelteIgnoredUnsubscribe?: NoSvelteIgnoredUnsubscribeConfiguration;
 	/**
 	 * Disallow the use of the $inspect rune.
 	 * See https://biomejs.dev/linter/rules/no-svelte-inspect
@@ -3372,6 +3412,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/no-undeclared-custom-properties
 	 */
 	noUndeclaredCustomProperties?: NoUndeclaredCustomPropertiesConfiguration;
+	/**
+	 * Disallow array methods with callbacks on arrays that only have empty slots.
+	 * See https://biomejs.dev/linter/rules/no-uninvoked-array-callback
+	 */
+	noUninvokedArrayCallback?: NoUninvokedArrayCallbackConfiguration;
 	/**
 	 * Disallow loop conditions whose variables are never modified in the loop.
 	 * See https://biomejs.dev/linter/rules/no-unmodified-loop-condition
@@ -3913,6 +3958,11 @@ export interface Nursery {
 	 */
 	useNamedLayer?: UseNamedLayerConfiguration;
 	/**
+	 * Enforce the use of the @next/third-parties/google components to load Google Analytics and Google Tag Manager.
+	 * See https://biomejs.dev/linter/rules/use-next-script-for-google-analytics
+	 */
+	useNextScriptForGoogleAnalytics?: UseNextScriptForGoogleAnalyticsConfiguration;
+	/**
 	 * Enforce using the nullish coalescing operator (??) instead of logical or (||).
 	 * See https://biomejs.dev/linter/rules/use-nullish-coalescing
 	 */
@@ -3922,6 +3972,16 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/use-object-from-entries
 	 */
 	useObjectFromEntries?: UseObjectFromEntriesConfiguration;
+	/**
+	 * Require the cpu field in package.json.
+	 * See https://biomejs.dev/linter/rules/use-package-json-cpu
+	 */
+	usePackageJsonCpu?: UsePackageJsonCpuConfiguration;
+	/**
+	 * Require the engines field in package.json.
+	 * See https://biomejs.dev/linter/rules/use-package-json-engines
+	 */
+	usePackageJsonEngines?: UsePackageJsonEnginesConfiguration;
 	/**
 	 * Require the cpu field in package.json to be a valid list of processor types.
 	 * See https://biomejs.dev/linter/rules/use-package-json-valid-cpu
@@ -6447,6 +6507,9 @@ export type NoArgumentsCallerOrCalleeConfiguration =
 export type NoArrayForEachConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoArrayForEachOptions;
+export type NoArrayMethodsOnArgumentsConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoArrayMethodsOnArgumentsOptions;
 export type NoArraySortForMinMaxConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoArraySortForMinMaxOptions;
@@ -6474,6 +6537,9 @@ export type NoChainedComparisonConfiguration =
 export type NoConsoleSpacesConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoConsoleSpacesOptions;
+export type NoConstantComparisonsConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoConstantComparisonsOptions;
 export type NoDanglingUnderscoreConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoDanglingUnderscoreOptions;
@@ -6489,6 +6555,9 @@ export type NoDynamicDeleteConfiguration =
 export type NoEagerArrayMethodsInLoopsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoEagerArrayMethodsInLoopsOptions;
+export type NoErasingOperationConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoErasingOperationOptions;
 export type NoExcessiveNestedBlocksConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoExcessiveNestedBlocksOptions;
@@ -6552,6 +6621,9 @@ export type NoMissingThrowConfiguration =
 export type NoMisusedPromisesConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoMisusedPromisesOptions;
+export type NoNegatedArrayPredicateConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoNegatedArrayPredicateOptions;
 export type NoNegationInEqualityCheckConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoNegationInEqualityCheckOptions;
@@ -6570,6 +6642,9 @@ export type NoNonScalableViewportConfiguration =
 export type NoNullConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoNullOptions;
+export type NoNumberArgumentOutOfRangeConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoNumberArgumentOutOfRangeOptions;
 export type NoObjectConstructorConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoObjectConstructorOptions;
@@ -6621,12 +6696,18 @@ export type NoSelfImportConfiguration =
 export type NoSelfNestedLayerConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoSelfNestedLayerOptions;
+export type NoSharedBranchCodeConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoSharedBranchCodeOptions;
 export type NoShortTimeValuesConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoShortTimeValuesOptions;
 export type NoSinglePromiseInPromiseMethodsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoSinglePromiseInPromiseMethodsOptions;
+export type NoSubtractionComparisonConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoSubtractionComparisonOptions;
 export type NoSvelteAddEventListenerConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoSvelteAddEventListenerOptions;
@@ -6645,6 +6726,9 @@ export type NoSvelteClassDirectiveConfiguration =
 export type NoSvelteExportLetConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoSvelteExportLetOptions;
+export type NoSvelteIgnoredUnsubscribeConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoSvelteIgnoredUnsubscribeOptions;
 export type NoSvelteInspectConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoSvelteInspectOptions;
@@ -6693,6 +6777,9 @@ export type NoUndeclaredClassesConfiguration =
 export type NoUndeclaredCustomPropertiesConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoUndeclaredCustomPropertiesOptions;
+export type NoUninvokedArrayCallbackConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoUninvokedArrayCallbackOptions;
 export type NoUnmodifiedLoopConditionConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoUnmodifiedLoopConditionOptions;
@@ -7017,12 +7104,21 @@ export type UseNamedFunctionConfiguration =
 export type UseNamedLayerConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseNamedLayerOptions;
+export type UseNextScriptForGoogleAnalyticsConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseNextScriptForGoogleAnalyticsOptions;
 export type UseNullishCoalescingConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseNullishCoalescingOptions;
 export type UseObjectFromEntriesConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseObjectFromEntriesOptions;
+export type UsePackageJsonCpuConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUsePackageJsonCpuOptions;
+export type UsePackageJsonEnginesConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUsePackageJsonEnginesOptions;
 export type UsePackageJsonValidCpuConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUsePackageJsonValidCpuOptions;
@@ -9333,6 +9429,10 @@ export interface RuleWithNoArrayForEachOptions {
 	level: RulePlainConfiguration;
 	options?: NoArrayForEachOptions;
 }
+export interface RuleWithNoArrayMethodsOnArgumentsOptions {
+	level: RulePlainConfiguration;
+	options?: NoArrayMethodsOnArgumentsOptions;
+}
 export interface RuleWithNoArraySortForMinMaxOptions {
 	/**
 	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
@@ -9385,6 +9485,10 @@ export interface RuleWithNoConsoleSpacesOptions {
 	level: RulePlainConfiguration;
 	options?: NoConsoleSpacesOptions;
 }
+export interface RuleWithNoConstantComparisonsOptions {
+	level: RulePlainConfiguration;
+	options?: NoConstantComparisonsOptions;
+}
 export interface RuleWithNoDanglingUnderscoreOptions {
 	level: RulePlainConfiguration;
 	options?: NoDanglingUnderscoreOptions;
@@ -9408,6 +9512,10 @@ export interface RuleWithNoDynamicDeleteOptions {
 export interface RuleWithNoEagerArrayMethodsInLoopsOptions {
 	level: RulePlainConfiguration;
 	options?: NoEagerArrayMethodsInLoopsOptions;
+}
+export interface RuleWithNoErasingOperationOptions {
+	level: RulePlainConfiguration;
+	options?: NoErasingOperationOptions;
 }
 export interface RuleWithNoExcessiveNestedBlocksOptions {
 	level: RulePlainConfiguration;
@@ -9521,6 +9629,14 @@ export interface RuleWithNoMisusedPromisesOptions {
 	level: RulePlainConfiguration;
 	options?: NoMisusedPromisesOptions;
 }
+export interface RuleWithNoNegatedArrayPredicateOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: NoNegatedArrayPredicateOptions;
+}
 export interface RuleWithNoNegationInEqualityCheckOptions {
 	/**
 	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
@@ -9552,6 +9668,10 @@ export interface RuleWithNoNullOptions {
 	fix?: FixKind;
 	level: RulePlainConfiguration;
 	options?: NoNullOptions;
+}
+export interface RuleWithNoNumberArgumentOutOfRangeOptions {
+	level: RulePlainConfiguration;
+	options?: NoNumberArgumentOutOfRangeOptions;
 }
 export interface RuleWithNoObjectConstructorOptions {
 	/**
@@ -9637,6 +9757,10 @@ export interface RuleWithNoSelfNestedLayerOptions {
 	level: RulePlainConfiguration;
 	options?: NoSelfNestedLayerOptions;
 }
+export interface RuleWithNoSharedBranchCodeOptions {
+	level: RulePlainConfiguration;
+	options?: NoSharedBranchCodeOptions;
+}
 export interface RuleWithNoShortTimeValuesOptions {
 	level: RulePlainConfiguration;
 	options?: NoShortTimeValuesOptions;
@@ -9648,6 +9772,14 @@ export interface RuleWithNoSinglePromiseInPromiseMethodsOptions {
 	fix?: FixKind;
 	level: RulePlainConfiguration;
 	options?: NoSinglePromiseInPromiseMethodsOptions;
+}
+export interface RuleWithNoSubtractionComparisonOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: NoSubtractionComparisonOptions;
 }
 export interface RuleWithNoSvelteAddEventListenerOptions {
 	/**
@@ -9684,6 +9816,10 @@ export interface RuleWithNoSvelteClassDirectiveOptions {
 export interface RuleWithNoSvelteExportLetOptions {
 	level: RulePlainConfiguration;
 	options?: NoSvelteExportLetOptions;
+}
+export interface RuleWithNoSvelteIgnoredUnsubscribeOptions {
+	level: RulePlainConfiguration;
+	options?: NoSvelteIgnoredUnsubscribeOptions;
 }
 export interface RuleWithNoSvelteInspectOptions {
 	level: RulePlainConfiguration;
@@ -9760,6 +9896,10 @@ export interface RuleWithNoUndeclaredClassesOptions {
 export interface RuleWithNoUndeclaredCustomPropertiesOptions {
 	level: RulePlainConfiguration;
 	options?: NoUndeclaredCustomPropertiesOptions;
+}
+export interface RuleWithNoUninvokedArrayCallbackOptions {
+	level: RulePlainConfiguration;
+	options?: NoUninvokedArrayCallbackOptions;
 }
 export interface RuleWithNoUnmodifiedLoopConditionOptions {
 	level: RulePlainConfiguration;
@@ -10337,6 +10477,10 @@ export interface RuleWithUseNamedLayerOptions {
 	level: RulePlainConfiguration;
 	options?: UseNamedLayerOptions;
 }
+export interface RuleWithUseNextScriptForGoogleAnalyticsOptions {
+	level: RulePlainConfiguration;
+	options?: UseNextScriptForGoogleAnalyticsOptions;
+}
 export interface RuleWithUseNullishCoalescingOptions {
 	/**
 	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
@@ -10352,6 +10496,14 @@ export interface RuleWithUseObjectFromEntriesOptions {
 	fix?: FixKind;
 	level: RulePlainConfiguration;
 	options?: UseObjectFromEntriesOptions;
+}
+export interface RuleWithUsePackageJsonCpuOptions {
+	level: RulePlainConfiguration;
+	options?: UsePackageJsonCpuOptions;
+}
+export interface RuleWithUsePackageJsonEnginesOptions {
+	level: RulePlainConfiguration;
+	options?: UsePackageJsonEnginesOptions;
 }
 export interface RuleWithUsePackageJsonValidCpuOptions {
 	level: RulePlainConfiguration;
@@ -12715,6 +12867,7 @@ export type UseYieldOptions = {};
 export type NoAccidentalBitwiseOperatorsOptions = {};
 export type NoArgumentsCallerOrCalleeOptions = {};
 export type NoArrayForEachOptions = {};
+export type NoArrayMethodsOnArgumentsOptions = {};
 export type NoArraySortForMinMaxOptions = {};
 export type NoAstroConflictingSetDirectivesOptions = {};
 export type NoAstroSetHtmlDirectiveOptions = {};
@@ -12726,11 +12879,13 @@ export type NoBooleanSortComparatorOptions = {};
 export type NoBunModulesOptions = {};
 export type NoChainedComparisonOptions = {};
 export type NoConsoleSpacesOptions = {};
+export type NoConstantComparisonsOptions = {};
 export type NoDanglingUnderscoreOptions = {};
 export type NoDoubleComparisonOptions = {};
 export type NoDuplicateMapKeysOptions = {};
 export type NoDynamicDeleteOptions = {};
 export type NoEagerArrayMethodsInLoopsOptions = {};
+export type NoErasingOperationOptions = {};
 export interface NoExcessiveNestedBlocksOptions {
 	/**
 	 * Names of at-rules whose blocks don't count as a nesting level and are never reported,
@@ -12808,12 +12963,14 @@ export type NoMisplacedListElementsOptions = {};
 export type NoMissingScssInterpolationOptions = {};
 export type NoMissingThrowOptions = {};
 export type NoMisusedPromisesOptions = {};
+export type NoNegatedArrayPredicateOptions = {};
 export type NoNegationInEqualityCheckOptions = {};
 export type NoNestedSwitchOptions = {};
 export type NoNestedTemplateLiteralsOptions = {};
 export type NoNewRequireOptions = {};
 export type NoNonScalableViewportOptions = {};
 export type NoNullOptions = {};
+export type NoNumberArgumentOutOfRangeOptions = {};
 export type NoObjectConstructorOptions = {};
 export type NoObjectLiteralComparisonOptions = {};
 export type NoObsoleteAttributesOptions = {};
@@ -12831,6 +12988,7 @@ export type NoReturnArrayPushOptions = {};
 export type NoReturnInFinallyOptions = {};
 export type NoSelfImportOptions = {};
 export type NoSelfNestedLayerOptions = {};
+export type NoSharedBranchCodeOptions = {};
 export interface NoShortTimeValuesOptions {
 	/**
 	 * The shortest time allowed for animations and transitions, as a whole number of milliseconds.
@@ -12840,12 +12998,14 @@ export interface NoShortTimeValuesOptions {
 	minimum?: number;
 }
 export type NoSinglePromiseInPromiseMethodsOptions = {};
+export type NoSubtractionComparisonOptions = {};
 export type NoSvelteAddEventListenerOptions = {};
 export type NoSvelteAtDebugTagsOptions = {};
 export type NoSvelteAtHtmlTagsOptions = {};
 export type NoSvelteBindValueOnCheckableInputsOptions = {};
 export type NoSvelteClassDirectiveOptions = {};
 export type NoSvelteExportLetOptions = {};
+export type NoSvelteIgnoredUnsubscribeOptions = {};
 export type NoSvelteInspectOptions = {};
 export type NoSvelteInternalOptions = {};
 export type NoSvelteLegacyConstOptions = {};
@@ -12913,6 +13073,7 @@ export type NoThisOutsideOfClassOptions = {};
  */
 export type NoUndeclaredClassesOptions = {};
 export type NoUndeclaredCustomPropertiesOptions = {};
+export type NoUninvokedArrayCallbackOptions = {};
 export type NoUnmodifiedLoopConditionOptions = {};
 export type NoUnnecessaryStringTrimOptions = {};
 export type NoUnreadableForOfExpressionOptions = {};
@@ -13203,6 +13364,7 @@ export type UseMathTruncOptions = {};
 export type UseModernMathApisOptions = {};
 export type UseNamedFunctionOptions = {};
 export type UseNamedLayerOptions = {};
+export type UseNextScriptForGoogleAnalyticsOptions = {};
 /**
  * Options for the `useNullishCoalescing` rule.
  */
@@ -13239,6 +13401,8 @@ export interface UseObjectFromEntriesOptions {
 	 */
 	functions?: string[];
 }
+export type UsePackageJsonCpuOptions = {};
+export type UsePackageJsonEnginesOptions = {};
 export type UsePackageJsonValidCpuOptions = {};
 export type UsePackageJsonValidEnginesOptions = {};
 export type UsePromiseRejectErrorsOptions = {};
@@ -14914,6 +15078,7 @@ export type Category =
 	| "lint/correctness/useYield"
 	| "lint/nursery/noAccidentalBitwiseOperators"
 	| "lint/nursery/noArgumentsCallerOrCallee"
+	| "lint/nursery/noArrayMethodsOnArguments"
 	| "lint/nursery/noArrayForEach"
 	| "lint/nursery/noArraySortForMinMax"
 	| "lint/nursery/noAstroConflictingSetDirectives"
@@ -14926,6 +15091,7 @@ export type Category =
 	| "lint/nursery/noColorInvalidHex"
 	| "lint/nursery/noDanglingUnderscore"
 	| "lint/nursery/noConsoleSpaces"
+	| "lint/nursery/noConstantComparisons"
 	| "lint/nursery/noDuplicateMapKeys"
 	| "lint/nursery/noComponentHookFactories"
 	| "lint/nursery/noConditionalExpect"
@@ -14937,6 +15103,7 @@ export type Category =
 	| "lint/nursery/noDynamicDelete"
 	| "lint/nursery/noEagerArrayMethodsInLoops"
 	| "lint/nursery/noEmptyObjectKeys"
+	| "lint/nursery/noErasingOperation"
 	| "lint/nursery/noExcessiveNestedBlocks"
 	| "lint/nursery/noExcessiveNestedCallbacks"
 	| "lint/nursery/noExcessiveSelectorClasses"
@@ -14963,12 +15130,14 @@ export type Category =
 	| "lint/nursery/noMissingScssInterpolation"
 	| "lint/nursery/noMissingThrow"
 	| "lint/nursery/noMisusedPromises"
+	| "lint/nursery/noNegatedArrayPredicate"
 	| "lint/nursery/noNegationInEqualityCheck"
 	| "lint/nursery/noNestedSwitch"
 	| "lint/nursery/noNestedTemplateLiterals"
 	| "lint/nursery/noNewRequire"
 	| "lint/nursery/noNonScalableViewport"
 	| "lint/nursery/noNull"
+	| "lint/nursery/noNumberArgumentOutOfRange"
 	| "lint/nursery/noObjectConstructor"
 	| "lint/nursery/noObjectLiteralComparison"
 	| "lint/nursery/noObsoleteAttributes"
@@ -14999,7 +15168,9 @@ export type Category =
 	| "lint/nursery/noReturnInFinally"
 	| "lint/nursery/noSelfImport"
 	| "lint/nursery/noSelfNestedLayer"
+	| "lint/nursery/noSharedBranchCode"
 	| "lint/nursery/noShortTimeValues"
+	| "lint/nursery/noSubtractionComparison"
 	| "lint/nursery/noSinglePromiseInPromiseMethods"
 	| "lint/nursery/noSvelteAddEventListener"
 	| "lint/nursery/noSvelteAtDebugTags"
@@ -15007,6 +15178,7 @@ export type Category =
 	| "lint/nursery/noSvelteBindValueOnCheckableInputs"
 	| "lint/nursery/noSvelteClassDirective"
 	| "lint/nursery/noSvelteExportLet"
+	| "lint/nursery/noSvelteIgnoredUnsubscribe"
 	| "lint/nursery/noSvelteInspect"
 	| "lint/nursery/noSvelteInternal"
 	| "lint/nursery/noSvelteLegacyConst"
@@ -15023,6 +15195,7 @@ export type Category =
 	| "lint/nursery/noThisOutsideOfClass"
 	| "lint/nursery/noUndeclaredClasses"
 	| "lint/nursery/noUndeclaredCustomProperties"
+	| "lint/nursery/noUninvokedArrayCallback"
 	| "lint/nursery/noUnmodifiedLoopCondition"
 	| "lint/nursery/noUnreadableForOfExpression"
 	| "lint/nursery/noUnreadableIife"
@@ -15145,7 +15318,10 @@ export type Category =
 	| "lint/nursery/useNamedCaptureGroup"
 	| "lint/nursery/useNamedFunction"
 	| "lint/nursery/useNamedLayer"
+	| "lint/nursery/useNextScriptForGoogleAnalytics"
 	| "lint/nursery/useNullishCoalescing"
+	| "lint/nursery/usePackageJsonCpu"
+	| "lint/nursery/usePackageJsonEngines"
 	| "lint/nursery/useObjectFromEntries"
 	| "lint/nursery/usePackageJsonValidCpu"
 	| "lint/nursery/usePackageJsonValidEngines"
