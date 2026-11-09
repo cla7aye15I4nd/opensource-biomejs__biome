@@ -16193,7 +16193,13 @@ export type Category =
 	| "syntax/correctness/noInitializerWithDefinite"
 	| "syntax/correctness/noDuplicatePrivateClassMembers"
 	| "transformations/stripTypes"
-	| "files/missingHandler"
+	| "fs/missingHandler"
+	| "fs/cantRead"
+	| "fs/deeplyNestedSymlinkExpansion"
+	| "fs/dereferencedSymlink"
+	| "fs/io"
+	| "fs/nonUtf8Path"
+	| "fs/unknownFileType"
 	| "format"
 	| "check"
 	| "ci"
@@ -16635,7 +16641,8 @@ export type SvelteEmbeddingKind =
 	| "TextInterpolation"
 	| "SnippetSignature"
 	| "LegacyConst"
-	| "Declaration";
+	| "Declaration"
+	| "Generics";
 export type SvelteFileKind = "Component" | "SourceModule";
 export type EmbeddingHtmlKind =
 	| "None"
