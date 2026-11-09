@@ -61,6 +61,7 @@ static PROJECT_FILTERS: LazyLock<Vec<RuleFilter<'static>>> = LazyLock::new(|| {
         RuleFilter::Rule("nursery", "noTailwindRawColors"),
         RuleFilter::Rule("nursery", "noUndeclaredClasses"),
         RuleFilter::Rule("nursery", "noUndeclaredCustomProperties"),
+        RuleFilter::Rule("nursery", "noUnresolvedDefaultImport"),
         RuleFilter::Rule("nursery", "useTailwindSortedClasses"),
         RuleFilter::Rule("suspicious", "noDeprecatedImports"),
         RuleFilter::Rule("suspicious", "noImportCycles"),
@@ -132,6 +133,7 @@ static SOLID_FILTERS: LazyLock<Vec<RuleFilter<'static>>> = LazyLock::new(|| {
 static SVELTE_FILTERS: LazyLock<Vec<RuleFilter<'static>>> = LazyLock::new(|| {
     vec![
         RuleFilter::Rule("nursery", "noSvelteAddEventListener"),
+        RuleFilter::Rule("nursery", "noSvelteAsyncStore"),
         RuleFilter::Rule("nursery", "noSvelteAtDebugTags"),
         RuleFilter::Rule("nursery", "noSvelteAtHtmlTags"),
         RuleFilter::Rule("nursery", "noSvelteBindValueOnCheckableInputs"),
@@ -266,6 +268,7 @@ static VUE_FILTERS: LazyLock<Vec<RuleFilter<'static>>> = LazyLock::new(|| {
         RuleFilter::Rule("nursery", "noVueDeprecatedVBindSync"),
         RuleFilter::Rule("nursery", "noVueDeprecatedVOnNativeModifier"),
         RuleFilter::Rule("nursery", "noVueExcessiveProps"),
+        RuleFilter::Rule("nursery", "noVueExposeAfterAwait"),
         RuleFilter::Rule("nursery", "noVueLifecycleAfterAwait"),
         RuleFilter::Rule("nursery", "noVueLoneTemplate"),
         RuleFilter::Rule("nursery", "noVueMixin"),
