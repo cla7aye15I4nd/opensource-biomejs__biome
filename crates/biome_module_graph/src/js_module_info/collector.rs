@@ -1,3 +1,4 @@
+use super::flow::{FlowRootScanner, ModuleFlow};
 use crate::css_module_info::CssClassReference;
 use std::{borrow::Cow, sync::Arc};
 
@@ -6,8 +7,8 @@ use biome_js_syntax::{
     AnyJsArrowFunctionParameters, AnyJsBindingPattern, AnyJsCombinedSpecifier, AnyJsDeclaration,
     AnyJsExportDefaultDeclaration, AnyJsExpression, AnyJsImportClause, JsArrowFunctionExpression,
     JsAssignmentExpression, JsForVariableDeclaration, JsFormalParameter, JsLanguage,
-    JsRestParameter, JsSyntaxNode, JsVariableDeclaration, TsMappedType, TsModuleDeclaration,
-    TsTypeParameter, inner_string_text,
+    JsRestParameter, JsSyntaxNode, JsVariableDeclaration, TsInferType, TsMappedType,
+    TsModuleDeclaration, TsTypeParameter, inner_string_text,
 };
 use biome_js_type_info::{
     FunctionParameter, FunctionParameterBinding, GenericTypeParameter, RawTypeCollector,
@@ -556,6 +557,11 @@ impl JsModuleInfoCollector {
                     Some(generic) => self.reference_to_owned_data(TypeData::from(generic)),
                     None => TypeReference::unknown(),
                 };
+            } else if let Some(infer) = TsInferType::cast_ref(&ancestor) {
+                return match GenericTypeParameter::from_ts_infer_type(self, scope_id, &infer) {
+                    Some(generic) => self.reference_to_owned_data(TypeData::from(generic)),
+                    None => TypeReference::unknown(),
+                };
             }
         }
 
@@ -1001,6 +1007,7 @@ impl JsModuleInfo {
         mut collector: JsModuleInfoCollector,
         semantic_model: std::sync::Arc<biome_js_semantic::SemanticModel>,
         inference_mode: TypeInferenceMode,
+        flow_roots: FlowRootScanner,
     ) -> Self {
         collector.inference_mode = inference_mode;
         let finalised = collector.finalise(&semantic_model);
@@ -1025,6 +1032,16 @@ impl JsModuleInfo {
             &finalised.raw_types,
             &finalised.raw_binding_types,
         );
+        let flow = if collector.inference_mode == TypeInferenceMode::Disabled {
+            ModuleFlow::default()
+        } else {
+            ModuleFlow::collect(
+                flow_roots,
+                &semantic_model,
+                &finalised.raw_types,
+                &finalised.raw_binding_types,
+            )
+        };
 
         Self(Arc::new(JsModuleInfoInner {
             static_imports: Imports(collector.static_imports),
@@ -1039,6 +1056,7 @@ impl JsModuleInfo {
             namespace_members,
             diagnostics: collector.diagnostics.into_iter().map(Into::into).collect(),
             infer_types: collector.inference_mode != TypeInferenceMode::Disabled,
+            flow,
             referenced_classes: collector.referenced_classes,
         }))
     }

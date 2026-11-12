@@ -17,11 +17,13 @@ pub(crate) mod globals_ids;
 mod inferred_type;
 pub mod interned_types;
 mod local_inference;
+mod narrowing;
 pub mod resolved;
 mod return_type_relation;
 mod stringification;
 mod type_data;
 mod type_operations;
+mod type_relation;
 mod type_store;
 mod type_transform;
 mod type_traversal;
@@ -36,6 +38,10 @@ pub use inferred_type::{
     TypeTraversalError,
 };
 pub use interned_types::{RawTypeData, TypeDb};
+pub use narrowing::{
+    NarrowingPredicate, RawPrimitiveTarget, TypeofKind, is_narrowing_invariant,
+    is_raw_narrowing_invariant, narrow_type, raw_primitive_target,
+};
 pub use return_type_relation::{
     NarrowedTypeCandidates, ReturnTypeRelation, ReturnTypeVerdict, compare_declared_return_type,
 };

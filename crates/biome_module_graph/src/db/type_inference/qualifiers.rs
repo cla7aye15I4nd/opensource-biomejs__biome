@@ -1,8 +1,8 @@
 use super::{imports::MAX_NAMESPACE_IMPORT_MEMBER_STEPS, resolver::ResolutionCtx};
 use crate::{js_module_info::TsBindingReferenceExt, module_for_key, module_graph::ModuleInfoKind};
 use biome_js_type_info::{
-    Path, TypeImportQualifier, TypeReference, TypeReferenceQualifier, TypeResolverLevel,
-    global_type_id_for_qualifier,
+    ObjectKind, Path, TypeImportQualifier, TypeReference, TypeReferenceQualifier,
+    TypeResolverLevel, global_type_id_for_qualifier,
     interned_types::{
         InternedObject as InferredObject, Literal as InferredLiteral, LocalTypeHandle, LocalTypeId,
         TypeData as InferredTypeData, TypeMember as InferredTypeMember,
@@ -125,20 +125,11 @@ impl<'db> ResolutionCtx<'db, '_> {
                 } else if binding_is_imported
                     && let Some(import) = self.js_info.static_imports.get(identifier.text())
                 {
-                    let imported = self.resolve_import(&TypeImportQualifier {
+                    self.resolve_import(&TypeImportQualifier {
                         symbol: import.symbol.clone(),
                         specifier: Arc::new(import.specifier.clone()),
                         type_only: qualifier.type_only,
-                    });
-                    if qualifier.type_only
-                        && members.is_empty()
-                        && let InferredTypeData::MergedReference(reference) = imported
-                        && let Some(ty) = reference.ty(self.db)
-                    {
-                        ty
-                    } else {
-                        imported
-                    }
+                    })
                 } else if resolves_declarations_directly {
                     self.resolve_local_binding(binding.range())
                 } else {
@@ -158,6 +149,16 @@ impl<'db> ResolutionCtx<'db, '_> {
                         return InferredTypeData::Unknown;
                     };
                     target = member_ty;
+                }
+                // A type position names only the type meaning of a declaration
+                // merged with a value or a namespace, such as a class that a
+                // namespace extends. Earlier path segments name namespaces, so
+                // they are looked up with every meaning of the merged name.
+                if qualifier.type_only
+                    && let InferredTypeData::MergedReference(reference) = target
+                    && let Some(ty) = reference.ty(self.db)
+                {
+                    target = ty;
                 }
 
                 return self.apply_qualifier_type_parameters(target, qualifier);
@@ -560,6 +561,7 @@ impl<'db> ResolutionCtx<'db, '_> {
             | InferredTypeData::TypeOperator(_)
             | InferredTypeData::IndexedAccess(_)
             | InferredTypeData::MappedType(_)
+            | InferredTypeData::Extends(_)
             | InferredTypeData::Literal(_)
             | InferredTypeData::MergedReference(_)
             | InferredTypeData::TypeofExpression(_)
@@ -632,6 +634,7 @@ impl<'db> ResolutionCtx<'db, '_> {
                     None,
                     members.into_boxed_slice(),
                     has_unknown_members,
+                    ObjectKind::Shape,
                 ))
             },
         )
@@ -658,6 +661,7 @@ impl<'db> ResolutionCtx<'db, '_> {
                 object.prototype(self.db),
                 object.members(self.db).clone(),
                 true,
+                object.kind(self.db),
             ))
         } else {
             ty
@@ -704,6 +708,9 @@ impl<'db> ResolutionCtx<'db, '_> {
                         object.has_unknown_members(self.db) || object.prototype(self.db).is_some(),
                     ));
                 }
+                InferredTypeData::Extends(extends) => {
+                    ty = self.select_conditional_branch(extends)?;
+                }
                 InferredTypeData::Unknown
                 | InferredTypeData::Global
                 | InferredTypeData::GlobalType(_)
@@ -741,60 +748,71 @@ impl<'db> ResolutionCtx<'db, '_> {
     }
 
     fn string_literal_keys(&mut self, ty: InferredTypeData<'db>) -> Option<Vec<Text>> {
-        match self.resolve_inferred_type(ty) {
-            InferredTypeData::Literal(literal) => match literal.literal(self.db) {
-                InferredLiteral::String(value) => Some(vec![value.as_ref().clone()]),
-                InferredLiteral::BigInt(_)
-                | InferredLiteral::Boolean(_)
-                | InferredLiteral::Number(_)
-                | InferredLiteral::Object(_)
-                | InferredLiteral::RegExp(_)
-                | InferredLiteral::Template(_) => None,
-            },
-            InferredTypeData::Union(union) => union
-                .types(self.db)
-                .to_vec()
-                .into_iter()
-                .map(|ty| self.string_literal_key(ty))
-                .collect(),
-            InferredTypeData::Unknown
-            | InferredTypeData::Global
-            | InferredTypeData::GlobalType(_)
-            | InferredTypeData::GlobalLocal(_)
-            | InferredTypeData::BigInt
-            | InferredTypeData::Boolean
-            | InferredTypeData::Null
-            | InferredTypeData::Number
-            | InferredTypeData::String
-            | InferredTypeData::Symbol
-            | InferredTypeData::Undefined
-            | InferredTypeData::Conditional
-            | InferredTypeData::Class(_)
-            | InferredTypeData::Constructor(_)
-            | InferredTypeData::Function(_)
-            | InferredTypeData::Interface(_)
-            | InferredTypeData::Module(_)
-            | InferredTypeData::Namespace(_)
-            | InferredTypeData::Object(_)
-            | InferredTypeData::Tuple(_)
-            | InferredTypeData::Generic(_)
-            | InferredTypeData::Local(_)
-            | InferredTypeData::Intersection(_)
-            | InferredTypeData::TypeOperator(_)
-            | InferredTypeData::IndexedAccess(_)
-            | InferredTypeData::MappedType(_)
-            | InferredTypeData::InstanceOf(_)
-            | InferredTypeData::MergedReference(_)
-            | InferredTypeData::TypeofExpression(_)
-            | InferredTypeData::TypeofType(_)
-            | InferredTypeData::TypeofValue(_)
-            | InferredTypeData::AnyKeyword
-            | InferredTypeData::NeverKeyword
-            | InferredTypeData::ObjectKeyword
-            | InferredTypeData::ThisKeyword
-            | InferredTypeData::UnknownKeyword
-            | InferredTypeData::VoidKeyword => None,
+        let mut ty = ty;
+        for _ in 0..MAX_LOCAL_TYPE_RESOLUTION_STEPS {
+            match self.resolve_inferred_type(ty) {
+                InferredTypeData::Extends(extends) => {
+                    ty = self.select_conditional_branch(extends)?;
+                }
+                InferredTypeData::Literal(literal) => {
+                    return match literal.literal(self.db) {
+                        InferredLiteral::String(value) => Some(vec![value.as_ref().clone()]),
+                        InferredLiteral::BigInt(_)
+                        | InferredLiteral::Boolean(_)
+                        | InferredLiteral::Number(_)
+                        | InferredLiteral::Object(_)
+                        | InferredLiteral::RegExp(_)
+                        | InferredLiteral::Template(_) => None,
+                    };
+                }
+                InferredTypeData::Union(union) => {
+                    return union
+                        .types(self.db)
+                        .to_vec()
+                        .into_iter()
+                        .map(|ty| self.string_literal_key(ty))
+                        .collect();
+                }
+                InferredTypeData::Unknown
+                | InferredTypeData::Global
+                | InferredTypeData::GlobalType(_)
+                | InferredTypeData::GlobalLocal(_)
+                | InferredTypeData::BigInt
+                | InferredTypeData::Boolean
+                | InferredTypeData::Null
+                | InferredTypeData::Number
+                | InferredTypeData::String
+                | InferredTypeData::Symbol
+                | InferredTypeData::Undefined
+                | InferredTypeData::Conditional
+                | InferredTypeData::Class(_)
+                | InferredTypeData::Constructor(_)
+                | InferredTypeData::Function(_)
+                | InferredTypeData::Interface(_)
+                | InferredTypeData::Module(_)
+                | InferredTypeData::Namespace(_)
+                | InferredTypeData::Object(_)
+                | InferredTypeData::Tuple(_)
+                | InferredTypeData::Generic(_)
+                | InferredTypeData::Local(_)
+                | InferredTypeData::Intersection(_)
+                | InferredTypeData::TypeOperator(_)
+                | InferredTypeData::IndexedAccess(_)
+                | InferredTypeData::MappedType(_)
+                | InferredTypeData::InstanceOf(_)
+                | InferredTypeData::MergedReference(_)
+                | InferredTypeData::TypeofExpression(_)
+                | InferredTypeData::TypeofType(_)
+                | InferredTypeData::TypeofValue(_)
+                | InferredTypeData::AnyKeyword
+                | InferredTypeData::NeverKeyword
+                | InferredTypeData::ObjectKeyword
+                | InferredTypeData::ThisKeyword
+                | InferredTypeData::UnknownKeyword
+                | InferredTypeData::VoidKeyword => return None,
+            }
         }
+        None
     }
 
     fn string_literal_key(&mut self, ty: InferredTypeData<'db>) -> Option<Text> {
@@ -835,6 +853,7 @@ impl<'db> ResolutionCtx<'db, '_> {
             | InferredTypeData::TypeOperator(_)
             | InferredTypeData::IndexedAccess(_)
             | InferredTypeData::MappedType(_)
+            | InferredTypeData::Extends(_)
             | InferredTypeData::InstanceOf(_)
             | InferredTypeData::MergedReference(_)
             | InferredTypeData::TypeofExpression(_)

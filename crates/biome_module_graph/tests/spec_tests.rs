@@ -36,6 +36,8 @@ use salsa::plumbing::{AsId, FromId};
 use std::collections::BTreeMap;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
+#[path = "spec_tests/assertions.test.rs"]
+mod assertions;
 #[path = "spec_tests/callback_parameters.test.rs"]
 mod callback_parameters;
 #[path = "spec_tests/calls.test.rs"]
@@ -52,6 +54,8 @@ mod database;
 mod expected_argument_inference;
 #[path = "spec_tests/expressions.test.rs"]
 mod expressions;
+#[path = "spec_tests/function_guards.test.rs"]
+mod function_guards;
 #[path = "spec_tests/globals.test.rs"]
 mod globals;
 #[path = "spec_tests/html_classes.test.rs"]
@@ -66,6 +70,8 @@ mod intersections;
 mod js_doc;
 #[path = "spec_tests/module_resolution.test.rs"]
 mod module_resolution;
+#[path = "spec_tests/narrowing.test.rs"]
+mod narrowing;
 #[path = "spec_tests/normalization.test.rs"]
 mod normalization;
 #[path = "spec_tests/overloads.test.rs"]
