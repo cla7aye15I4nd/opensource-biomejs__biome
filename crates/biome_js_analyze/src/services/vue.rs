@@ -7,8 +7,13 @@
 //!   compares declarations with each other.
 //! - [`VueProp`] runs the rule once per prop. Use it when the rule judges
 //!   one prop on its own.
+//! - [`VueModel`] runs the rule once per model declared with
+//!   `defineModel()`. Use it when the rule judges one model on its own.
 //! - [`VueEmit`] runs the rule once per declared event. Use it when the rule
 //!   judges one event declaration on its own.
+//! - [`VueComponentRegistration`] runs the rule once per entry of the
+//!   `components` option. Use it when the rule judges one locally registered
+//!   component on its own.
 //! - [`VueSnippet`] runs the rule once on an embedded snippet, such as a
 //!   directive value. Use it when the rule judges a template expression
 //!   by where it is written.
@@ -166,8 +171,17 @@ impl Visitor for VueSemanticVisitor {
             for prop in component.props().filter(|prop| service.declares(prop)) {
                 ctx.match_query(VuePropMatch(prop));
             }
+            for model in component.models().filter(|model| service.declares(model)) {
+                ctx.match_query(VueModelMatch(model));
+            }
             for emit in component.emits().filter(|emit| service.declares(emit)) {
                 ctx.match_query(VueEmitMatch(emit));
+            }
+            for registration in component
+                .registered_components()
+                .filter(|registration| service.declares(registration))
+            {
+                ctx.match_query(VueComponentRegistrationMatch(registration));
             }
         }
         if let Some(snippet) = service.snippet {
@@ -286,11 +300,25 @@ define_vue_query!(
     Prop
 );
 define_vue_query!(
+    /// Matches each model of each Vue component, declared with
+    /// `defineModel()`. A model also declares a prop, so its output is the
+    /// [`Prop`] it declares.
+    VueModel,
+    VueModelMatch,
+    Prop
+);
+define_vue_query!(
     /// Matches each event each Vue component declares, whatever syntax
     /// declares it.
     VueEmit,
     VueEmitMatch,
     Emit
+);
+define_vue_query!(
+    /// Matches each entry of the `components` option of each Vue component.
+    VueComponentRegistration,
+    VueComponentRegistrationMatch,
+    Symbol
 );
 define_vue_query!(
     /// Matches the analyzed tree when it is a snippet embedded in a `.vue`

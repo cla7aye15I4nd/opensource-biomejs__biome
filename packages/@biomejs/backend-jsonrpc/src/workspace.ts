@@ -3013,6 +3013,11 @@ export interface Nursery {
 	 */
 	noChainedComparison?: NoChainedComparisonConfiguration;
 	/**
+	 * Disallow splice() and toSpliced() calls that are harder to read than the operation they perform.
+	 * See https://biomejs.dev/linter/rules/no-confusing-array-splice
+	 */
+	noConfusingArraySplice?: NoConfusingArraySpliceConfiguration;
+	/**
 	 * Disallow leading and trailing spaces in console method arguments.
 	 * See https://biomejs.dev/linter/rules/no-console-spaces
 	 */
@@ -3052,6 +3057,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/no-dynamic-delete
 	 */
 	noDynamicDelete?: NoDynamicDeleteConfiguration;
+	/**
+	 * Disallow require() calls whose module name isn't a fixed string.
+	 * See https://biomejs.dev/linter/rules/no-dynamic-require
+	 */
+	noDynamicRequire?: NoDynamicRequireConfiguration;
 	/**
 	 * Disallow .map() and .filter() calls in the header of for...of loops.
 	 * See https://biomejs.dev/linter/rules/no-eager-array-methods-in-loops
@@ -3128,6 +3138,11 @@ export interface Nursery {
 	 */
 	noJsonUnsafeValues?: NoJsonUnsafeValuesConfiguration;
 	/**
+	 * Disallow reading event.currentTarget after the browser has finished handling the event.
+	 * See https://biomejs.dev/linter/rules/no-late-current-target-access
+	 */
+	noLateCurrentTargetAccess?: NoLateCurrentTargetAccessConfiguration;
+	/**
 	 * Disallow calling preventDefault(), stopPropagation(), or stopImmediatePropagation() after the browser has finished handling the event.
 	 * See https://biomejs.dev/linter/rules/no-late-event-control
 	 */
@@ -3177,6 +3192,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/no-misused-promises
 	 */
 	noMisusedPromises?: NoMisusedPromisesConfiguration;
+	/**
+	 * Disallow spreading values in ways that can cause unexpected results.
+	 * See https://biomejs.dev/linter/rules/no-misused-spread
+	 */
+	noMisusedSpread?: NoMisusedSpreadConfiguration;
 	/**
 	 * Disallow negating the result of Array#some() or Array#every().
 	 * See https://biomejs.dev/linter/rules/no-negated-array-predicate
@@ -3433,6 +3453,11 @@ export interface Nursery {
 	 */
 	noTailwindRawColors?: NoTailwindRawColorsConfiguration;
 	/**
+	 * Disallow Tailwind CSS classes and variants that your project doesn't allow.
+	 * See https://biomejs.dev/linter/rules/no-tailwind-restricted-classes
+	 */
+	noTailwindRestrictedClasses?: NoTailwindRestrictedClassesConfiguration;
+	/**
 	 * Disallow Tailwind utilities that override the appearance of components.
 	 * See https://biomejs.dev/linter/rules/no-tailwind-restyled-components
 	 */
@@ -3452,6 +3477,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/no-this-outside-of-class
 	 */
 	noThisOutsideOfClass?: NoThisOutsideOfClassConfiguration;
+	/**
+	 * Disallow triple-slash reference comments that can be replaced by imports.
+	 * See https://biomejs.dev/linter/rules/no-triple-slash-reference
+	 */
+	noTripleSlashReference?: NoTripleSlashReferenceConfiguration;
 	/**
 	 * Reports CSS class names in HTML class attributes that are not defined in any \<style> block or linked stylesheet available to the file.
 	 * See https://biomejs.dev/linter/rules/no-undeclared-classes
@@ -3603,6 +3633,11 @@ export interface Nursery {
 	 */
 	noVueComputedPropertiesInData?: NoVueComputedPropertiesInDataConfiguration;
 	/**
+	 * Disallow default values in Vue's defineModel().
+	 * See https://biomejs.dev/linter/rules/no-vue-define-model-default
+	 */
+	noVueDefineModelDefault?: NoVueDefineModelDefaultConfiguration;
+	/**
 	 * Disallow the deprecated Vue.config.keyCodes option.
 	 * See https://biomejs.dev/linter/rules/no-vue-deprecated-config-key-codes
 	 */
@@ -3682,6 +3717,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/no-vue-deprecated-v-bind-sync
 	 */
 	noVueDeprecatedVBindSync?: NoVueDeprecatedVBindSyncConfiguration;
+	/**
+	 * Disallow the deprecated Vue v-is directive.
+	 * See https://biomejs.dev/linter/rules/no-vue-deprecated-v-is
+	 */
+	noVueDeprecatedVIs?: NoVueDeprecatedVIsConfiguration;
 	/**
 	 * Disallow the .native modifier on Vue's v-on directive.
 	 * See https://biomejs.dev/linter/rules/no-vue-deprecated-v-on-native-modifier
@@ -4108,6 +4148,11 @@ export interface Nursery {
 	 */
 	usePackageJsonValidEngines?: UsePackageJsonValidEnginesConfiguration;
 	/**
+	 * Require the license field in package.json to be a valid license.
+	 * See https://biomejs.dev/linter/rules/use-package-json-valid-license
+	 */
+	usePackageJsonValidLicense?: UsePackageJsonValidLicenseConfiguration;
+	/**
 	 * Require Error objects as Promise rejection reasons.
 	 * See https://biomejs.dev/linter/rules/use-promise-reject-errors
 	 */
@@ -4352,6 +4397,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/use-vue-prop-type-constructor
 	 */
 	useVuePropTypeConstructor?: UseVuePropTypeConstructorConfiguration;
+	/**
+	 * Enforce a consistent casing style for the names of components registered in the components option of Vue components.
+	 * See https://biomejs.dev/linter/rules/use-vue-registered-component-name-casing
+	 */
+	useVueRegisteredComponentNameCasing?: UseVueRegisteredComponentNameCasingConfiguration;
 	/**
 	 * Require the render function of a Vue component to return a value.
 	 * See https://biomejs.dev/linter/rules/use-vue-render-return
@@ -6657,6 +6707,9 @@ export type NoBunModulesConfiguration =
 export type NoChainedComparisonConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoChainedComparisonOptions;
+export type NoConfusingArraySpliceConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoConfusingArraySpliceOptions;
 export type NoConsoleSpacesConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoConsoleSpacesOptions;
@@ -6681,6 +6734,9 @@ export type NoDuplicateTypeConstituentsConfiguration =
 export type NoDynamicDeleteConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoDynamicDeleteOptions;
+export type NoDynamicRequireConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoDynamicRequireOptions;
 export type NoEagerArrayMethodsInLoopsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoEagerArrayMethodsInLoopsOptions;
@@ -6726,6 +6782,9 @@ export type NoJsRestrictedPropertiesConfiguration =
 export type NoJsonUnsafeValuesConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoJsonUnsafeValuesOptions;
+export type NoLateCurrentTargetAccessConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoLateCurrentTargetAccessOptions;
 export type NoLateEventControlConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoLateEventControlOptions;
@@ -6756,6 +6815,9 @@ export type NoMissingThrowConfiguration =
 export type NoMisusedPromisesConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoMisusedPromisesOptions;
+export type NoMisusedSpreadConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoMisusedSpreadOptions;
 export type NoNegatedArrayPredicateConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoNegatedArrayPredicateOptions;
@@ -6909,6 +6971,9 @@ export type NoTailwindLegacyUtilitiesConfiguration =
 export type NoTailwindRawColorsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoTailwindRawColorsOptions;
+export type NoTailwindRestrictedClassesConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoTailwindRestrictedClassesOptions;
 export type NoTailwindRestyledComponentsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoTailwindRestyledComponentsOptions;
@@ -6921,6 +6986,9 @@ export type NoTanstackQueryVoidQueryFnConfiguration =
 export type NoThisOutsideOfClassConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoThisOutsideOfClassOptions;
+export type NoTripleSlashReferenceConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoTripleSlashReferenceOptions;
 export type NoUndeclaredClassesConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoUndeclaredClassesOptions;
@@ -7011,6 +7079,9 @@ export type NoVueChildContentConfiguration =
 export type NoVueComputedPropertiesInDataConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoVueComputedPropertiesInDataOptions;
+export type NoVueDefineModelDefaultConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoVueDefineModelDefaultOptions;
 export type NoVueDeprecatedConfigKeyCodesConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoVueDeprecatedConfigKeyCodesOptions;
@@ -7059,6 +7130,9 @@ export type NoVueDeprecatedSlotScopeConfiguration =
 export type NoVueDeprecatedVBindSyncConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoVueDeprecatedVBindSyncOptions;
+export type NoVueDeprecatedVIsConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoVueDeprecatedVIsOptions;
 export type NoVueDeprecatedVOnNativeModifierConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoVueDeprecatedVOnNativeModifierOptions;
@@ -7314,6 +7388,9 @@ export type UsePackageJsonValidCpuConfiguration =
 export type UsePackageJsonValidEnginesConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUsePackageJsonValidEnginesOptions;
+export type UsePackageJsonValidLicenseConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUsePackageJsonValidLicenseOptions;
 export type UsePromiseRejectErrorsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUsePromiseRejectErrorsOptions;
@@ -7461,6 +7538,9 @@ export type UseVueOneComponentPerFileConfiguration =
 export type UseVuePropTypeConstructorConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseVuePropTypeConstructorOptions;
+export type UseVueRegisteredComponentNameCasingConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseVueRegisteredComponentNameCasingOptions;
 export type UseVueRenderReturnConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseVueRenderReturnOptions;
@@ -9673,6 +9753,14 @@ export interface RuleWithNoChainedComparisonOptions {
 	level: RulePlainConfiguration;
 	options?: NoChainedComparisonOptions;
 }
+export interface RuleWithNoConfusingArraySpliceOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: NoConfusingArraySpliceOptions;
+}
 export interface RuleWithNoConsoleSpacesOptions {
 	/**
 	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
@@ -9720,6 +9808,10 @@ export interface RuleWithNoDuplicateTypeConstituentsOptions {
 export interface RuleWithNoDynamicDeleteOptions {
 	level: RulePlainConfiguration;
 	options?: NoDynamicDeleteOptions;
+}
+export interface RuleWithNoDynamicRequireOptions {
+	level: RulePlainConfiguration;
+	options?: NoDynamicRequireOptions;
 }
 export interface RuleWithNoEagerArrayMethodsInLoopsOptions {
 	level: RulePlainConfiguration;
@@ -9789,6 +9881,10 @@ export interface RuleWithNoJsonUnsafeValuesOptions {
 	level: RulePlainConfiguration;
 	options?: NoJsonUnsafeValuesOptions;
 }
+export interface RuleWithNoLateCurrentTargetAccessOptions {
+	level: RulePlainConfiguration;
+	options?: NoLateCurrentTargetAccessOptions;
+}
 export interface RuleWithNoLateEventControlOptions {
 	level: RulePlainConfiguration;
 	options?: NoLateEventControlOptions;
@@ -9848,6 +9944,10 @@ export interface RuleWithNoMisusedPromisesOptions {
 	fix?: FixKind;
 	level: RulePlainConfiguration;
 	options?: NoMisusedPromisesOptions;
+}
+export interface RuleWithNoMisusedSpreadOptions {
+	level: RulePlainConfiguration;
+	options?: NoMisusedSpreadOptions;
 }
 export interface RuleWithNoNegatedArrayPredicateOptions {
 	/**
@@ -10117,6 +10217,14 @@ export interface RuleWithNoTailwindRawColorsOptions {
 	level: RulePlainConfiguration;
 	options?: NoTailwindRawColorsOptions;
 }
+export interface RuleWithNoTailwindRestrictedClassesOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: NoTailwindRestrictedClassesOptions;
+}
 export interface RuleWithNoTailwindRestyledComponentsOptions {
 	level: RulePlainConfiguration;
 	options?: NoTailwindRestyledComponentsOptions;
@@ -10132,6 +10240,10 @@ export interface RuleWithNoTanstackQueryVoidQueryFnOptions {
 export interface RuleWithNoThisOutsideOfClassOptions {
 	level: RulePlainConfiguration;
 	options?: NoThisOutsideOfClassOptions;
+}
+export interface RuleWithNoTripleSlashReferenceOptions {
+	level: RulePlainConfiguration;
+	options?: NoTripleSlashReferenceOptions;
 }
 export interface RuleWithNoUndeclaredClassesOptions {
 	level: RulePlainConfiguration;
@@ -10297,6 +10409,10 @@ export interface RuleWithNoVueComputedPropertiesInDataOptions {
 	level: RulePlainConfiguration;
 	options?: NoVueComputedPropertiesInDataOptions;
 }
+export interface RuleWithNoVueDefineModelDefaultOptions {
+	level: RulePlainConfiguration;
+	options?: NoVueDefineModelDefaultOptions;
+}
 export interface RuleWithNoVueDeprecatedConfigKeyCodesOptions {
 	level: RulePlainConfiguration;
 	options?: NoVueDeprecatedConfigKeyCodesOptions;
@@ -10376,6 +10492,10 @@ export interface RuleWithNoVueDeprecatedVBindSyncOptions {
 	fix?: FixKind;
 	level: RulePlainConfiguration;
 	options?: NoVueDeprecatedVBindSyncOptions;
+}
+export interface RuleWithNoVueDeprecatedVIsOptions {
+	level: RulePlainConfiguration;
+	options?: NoVueDeprecatedVIsOptions;
 }
 export interface RuleWithNoVueDeprecatedVOnNativeModifierOptions {
 	level: RulePlainConfiguration;
@@ -10829,6 +10949,10 @@ export interface RuleWithUsePackageJsonValidEnginesOptions {
 	level: RulePlainConfiguration;
 	options?: UsePackageJsonValidEnginesOptions;
 }
+export interface RuleWithUsePackageJsonValidLicenseOptions {
+	level: RulePlainConfiguration;
+	options?: UsePackageJsonValidLicenseOptions;
+}
 export interface RuleWithUsePromiseRejectErrorsOptions {
 	level: RulePlainConfiguration;
 	options?: UsePromiseRejectErrorsOptions;
@@ -11116,6 +11240,14 @@ export interface RuleWithUseVuePropTypeConstructorOptions {
 	fix?: FixKind;
 	level: RulePlainConfiguration;
 	options?: UseVuePropTypeConstructorOptions;
+}
+export interface RuleWithUseVueRegisteredComponentNameCasingOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: UseVueRegisteredComponentNameCasingOptions;
 }
 export interface RuleWithUseVueRenderReturnOptions {
 	level: RulePlainConfiguration;
@@ -13199,6 +13331,7 @@ export interface NoBaseToStringOptions {
 export type NoBooleanSortComparatorOptions = {};
 export type NoBunModulesOptions = {};
 export type NoChainedComparisonOptions = {};
+export type NoConfusingArraySpliceOptions = {};
 export type NoConsoleSpacesOptions = {};
 export type NoConstantComparisonsOptions = {};
 export type NoDanglingUnderscoreOptions = {};
@@ -13217,6 +13350,13 @@ export interface NoDuplicateTypeConstituentsOptions {
 	ignoreUnions?: boolean;
 }
 export type NoDynamicDeleteOptions = {};
+export interface NoDynamicRequireOptions {
+	/**
+	 * Also report `import()` calls whose module name isn't a fixed string.
+	 * Disabled by default.
+	 */
+	checkDynamicImports?: boolean;
+}
 export type NoEagerArrayMethodsInLoopsOptions = {};
 export type NoErasingOperationOptions = {};
 export interface NoExcessiveNestedBlocksOptions {
@@ -13355,6 +13495,7 @@ export interface NoJsRestrictedPropertiesOptions {
 	entries?: RestrictedPropertyEntry[];
 }
 export type NoJsonUnsafeValuesOptions = {};
+export type NoLateCurrentTargetAccessOptions = {};
 export type NoLateEventControlOptions = {};
 export type NoMagicArrayFlatDepthOptions = {};
 export interface NoMapSpreadOptions {
@@ -13378,6 +13519,7 @@ export type NoMisplacedListElementsOptions = {};
 export type NoMissingScssInterpolationOptions = {};
 export type NoMissingThrowOptions = {};
 export type NoMisusedPromisesOptions = {};
+export type NoMisusedSpreadOptions = {};
 export type NoNegatedArrayPredicateOptions = {};
 export type NoNegationInEqualityCheckOptions = {};
 export type NoNestedSwitchOptions = {};
@@ -13479,6 +13621,28 @@ export interface NoTailwindRawColorsOptions {
 	 */
 	allowedColors?: string[];
 }
+export interface NoTailwindRestrictedClassesOptions {
+	/**
+	 * Classes to restrict.
+	 *
+	 * Each key is a class without variants or `!`, such as `text-green-500`.
+	 * A `*` can stand for the whole utility name, as in `*-md`, the whole
+	 * value, as in `bg-*`, or the value of an arbitrary property, as in
+	 * `[color:*]`. Each value is either the message to show, or an object with
+	 * an optional `message` and an optional `use` replacement.
+	 */
+	classes?: Record<string, TailwindRestriction>;
+	/**
+	 * Variants to restrict.
+	 *
+	 * Each key is a variant, such as `dark` or `group-hover`. A `*` can stand
+	 * for the parts at the end, as in `group-*`, or at the start, as in
+	 * `*-hover`, and `[*]` matches any arbitrary variant. Each value is either
+	 * the message to show, or an object with an optional `message` and an
+	 * optional `use` replacement.
+	 */
+	variants?: Record<string, TailwindRestriction>;
+}
 export interface NoTailwindRestyledComponentsOptions {
 	/**
 	 * Additional component-specific exceptions. Defaults to an empty list.
@@ -13488,6 +13652,24 @@ export interface NoTailwindRestyledComponentsOptions {
 export type NoTanstackQueryRestDestructuringOptions = {};
 export type NoTanstackQueryVoidQueryFnOptions = {};
 export type NoThisOutsideOfClassOptions = {};
+export interface NoTripleSlashReferenceOptions {
+	/**
+	 * Whether `/// <reference lib="..." />` comments are allowed.
+	 * Set it to `"never"` to report all of them. Defaults to `"always"`.
+	 */
+	lib?: TripleSlashReferenceUsage;
+	/**
+	 * Whether `/// <reference path="..." />` comments are allowed.
+	 * Set it to `"always"` to allow all of them. Defaults to `"never"`.
+	 */
+	path?: TripleSlashReferenceUsage;
+	/**
+	 * Whether `/// <reference types="..." />` comments are allowed.
+	 * With `"preferImport"`, a comment is reported only when the file also imports the same
+	 * package. Defaults to `"preferImport"`.
+	 */
+	types?: TripleSlashTypesReferenceUsage;
+}
 /**
  * Options for the `noUndeclaredClasses` rule.
  */
@@ -13528,6 +13710,7 @@ export interface NoVueChildContentOptions {
 	additionalDirectives?: string[];
 }
 export type NoVueComputedPropertiesInDataOptions = {};
+export type NoVueDefineModelDefaultOptions = {};
 export type NoVueDeprecatedConfigKeyCodesOptions = {};
 export type NoVueDeprecatedDeleteSetOptions = {};
 export type NoVueDeprecatedDestroyedLifecycleOptions = {};
@@ -13562,6 +13745,7 @@ export interface NoVueDeprecatedSlotAttributeOptions {
 }
 export type NoVueDeprecatedSlotScopeOptions = {};
 export type NoVueDeprecatedVBindSyncOptions = {};
+export type NoVueDeprecatedVIsOptions = {};
 export type NoVueDeprecatedVOnNativeModifierOptions = {};
 export interface NoVueExcessivePropsOptions {
 	/**
@@ -13876,6 +14060,7 @@ export type UsePackageJsonCpuOptions = {};
 export type UsePackageJsonEnginesOptions = {};
 export type UsePackageJsonValidCpuOptions = {};
 export type UsePackageJsonValidEnginesOptions = {};
+export type UsePackageJsonValidLicenseOptions = {};
 export type UsePromiseRejectErrorsOptions = {};
 export interface UseReactCompilerOptions {
 	/**
@@ -14064,6 +14249,13 @@ export interface UseVueMacroVariableNameOptions {
 export type UseVueMatchingComponentFileNameOptions = {};
 export type UseVueOneComponentPerFileOptions = {};
 export type UseVuePropTypeConstructorOptions = {};
+export interface UseVueRegisteredComponentNameCasingOptions {
+	/**
+	 * The casing that the names of components registered in the `components` option must
+	 * follow. If omitted, names must be in PascalCase.
+	 */
+	casing?: RegisteredComponentNameCasing;
+}
 export type UseVueRenderReturnOptions = {};
 export type UseVueSeparateStaticClassOptions = {};
 export type UseVueSingleEventPayloadOptions = {};
@@ -14957,6 +15149,10 @@ export type TailwindUtilityCategory =
 	| "effects"
 	| "motion"
 	| "layout";
+/**
+ * The message and replacement of a restricted class or variant.
+ */
+export type TailwindRestriction = string | TailwindRestrictionOptions;
 export interface TailwindComponentAllowance {
 	/**
 	 * Instructions on how to fix the problem, shown in diagnostics for the matching
@@ -14976,6 +15172,11 @@ export interface TailwindComponentAllowance {
 	 */
 	components: TailwindAllowedComponents;
 }
+export type TripleSlashReferenceUsage = "always" | "never";
+export type TripleSlashTypesReferenceUsage =
+	| "always"
+	| "never"
+	| "preferImport";
 export interface RestrictedFunction {
 	/**
 	 * The message to show in place of the default message.
@@ -15078,6 +15279,10 @@ export type VueSlotStyle = "shorthand" | "longhand" | "v-slot";
  * How a named slot is written.
  */
 export type VueNamedSlotStyle = "shorthand" | "longhand";
+export type RegisteredComponentNameCasing =
+	| "PascalCase"
+	| "camelCase"
+	| "kebab-case";
 export type SlotNameCasing = "camelCase" | "kebab-case" | "singleword";
 /**
  * Specifies whether property assignments on function parameters are allowed or denied.
@@ -15157,6 +15362,17 @@ export type VueDirectiveStyle2 = "shorthand" | "longhand";
 export type AvailabilityTarget = AvailabilityNamed | number;
 export type GroupMatcher = ImportMatcher | SourceMatcher;
 export type StableHookResult = boolean | number[] | string[];
+export interface TailwindRestrictionOptions {
+	/**
+	 * The message to show.
+	 */
+	message?: string;
+	/**
+	 * The class or variant to use instead. Biome suggests a fix that uses it
+	 * when the key has no `*`.
+	 */
+	use?: string;
+}
 export type TailwindAllowedComponents = string | string[];
 export type RestrictedFunctionPath = string | string[];
 export interface PathOptions {
@@ -15573,6 +15789,7 @@ export type Category =
 	| "lint/nursery/noColorInvalidHex"
 	| "lint/nursery/noComponentHookFactories"
 	| "lint/nursery/noConditionalExpect"
+	| "lint/nursery/noConfusingArraySplice"
 	| "lint/nursery/noConsoleSpaces"
 	| "lint/nursery/noConstantComparisons"
 	| "lint/nursery/noDanglingUnderscore"
@@ -15585,6 +15802,7 @@ export type Category =
 	| "lint/nursery/noDuplicateSelectors"
 	| "lint/nursery/noDuplicateTypeConstituents"
 	| "lint/nursery/noDynamicDelete"
+	| "lint/nursery/noDynamicRequire"
 	| "lint/nursery/noEagerArrayMethodsInLoops"
 	| "lint/nursery/noEmptyObjectKeys"
 	| "lint/nursery/noErasingOperation"
@@ -15605,6 +15823,7 @@ export type Category =
 	| "lint/nursery/noIteratorProperty"
 	| "lint/nursery/noJsRestrictedProperties"
 	| "lint/nursery/noJsonUnsafeValues"
+	| "lint/nursery/noLateCurrentTargetAccess"
 	| "lint/nursery/noLateEventControl"
 	| "lint/nursery/noMagicArrayFlatDepth"
 	| "lint/nursery/noMapSpread"
@@ -15616,6 +15835,7 @@ export type Category =
 	| "lint/nursery/noMissingScssInterpolation"
 	| "lint/nursery/noMissingThrow"
 	| "lint/nursery/noMisusedPromises"
+	| "lint/nursery/noMisusedSpread"
 	| "lint/nursery/noNegatedArrayPredicate"
 	| "lint/nursery/noNegationInEqualityCheck"
 	| "lint/nursery/noNestedSwitch"
@@ -15680,10 +15900,12 @@ export type Category =
 	| "lint/nursery/noTailwindArbitraryValue"
 	| "lint/nursery/noTailwindLegacyUtilities"
 	| "lint/nursery/noTailwindRawColors"
+	| "lint/nursery/noTailwindRestrictedClasses"
 	| "lint/nursery/noTailwindRestyledComponents"
 	| "lint/nursery/noTanstackQueryRestDestructuring"
 	| "lint/nursery/noTanstackQueryVoidQueryFn"
 	| "lint/nursery/noThisOutsideOfClass"
+	| "lint/nursery/noTripleSlashReference"
 	| "lint/nursery/noUndeclaredClasses"
 	| "lint/nursery/noUndeclaredCustomProperties"
 	| "lint/nursery/noUninvokedArrayCallback"
@@ -15716,6 +15938,7 @@ export type Category =
 	| "lint/nursery/noVueBooleanDefault"
 	| "lint/nursery/noVueChildContent"
 	| "lint/nursery/noVueComputedPropertiesInData"
+	| "lint/nursery/noVueDefineModelDefault"
 	| "lint/nursery/noVueDeprecatedConfigKeyCodes"
 	| "lint/nursery/noVueDeprecatedDeleteSet"
 	| "lint/nursery/noVueDeprecatedDestroyedLifecycle"
@@ -15732,6 +15955,7 @@ export type Category =
 	| "lint/nursery/noVueDeprecatedSlotAttribute"
 	| "lint/nursery/noVueDeprecatedSlotScope"
 	| "lint/nursery/noVueDeprecatedVBindSync"
+	| "lint/nursery/noVueDeprecatedVIs"
 	| "lint/nursery/noVueDeprecatedVOnNativeModifier"
 	| "lint/nursery/noVueExcessiveProps"
 	| "lint/nursery/noVueExposeAfterAwait"
@@ -15829,6 +16053,7 @@ export type Category =
 	| "lint/nursery/usePackageJsonEngines"
 	| "lint/nursery/usePackageJsonValidCpu"
 	| "lint/nursery/usePackageJsonValidEngines"
+	| "lint/nursery/usePackageJsonValidLicense"
 	| "lint/nursery/usePromiseRejectErrors"
 	| "lint/nursery/useReactCompiler"
 	| "lint/nursery/useReactFunctionComponentDefinition"
@@ -15887,6 +16112,7 @@ export type Category =
 	| "lint/nursery/useVueNextTickPromise"
 	| "lint/nursery/useVueOneComponentPerFile"
 	| "lint/nursery/useVuePropTypeConstructor"
+	| "lint/nursery/useVueRegisteredComponentNameCasing"
 	| "lint/nursery/useVueRenderReturn"
 	| "lint/nursery/useVueSeparateStaticClass"
 	| "lint/nursery/useVueSingleEventPayload"
