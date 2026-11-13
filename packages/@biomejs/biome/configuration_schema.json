@@ -4192,6 +4192,23 @@
 			},
 			"additionalProperties": false
 		},
+		"NoDrizzleDbObjectInsideTransactionConfiguration": {
+			"oneOf": [
+				{ "$ref": "#/$defs/RulePlainConfiguration" },
+				{ "$ref": "#/$defs/RuleWithNoDrizzleDbObjectInsideTransactionOptions" }
+			]
+		},
+		"NoDrizzleDbObjectInsideTransactionOptions": {
+			"type": "object",
+			"properties": {
+				"drizzleObjectName": {
+					"description": "List of variable names to consider as Drizzle ORM instances.",
+					"type": ["array", "null"],
+					"items": { "type": "string" }
+				}
+			},
+			"additionalProperties": false
+		},
 		"NoDrizzleDeleteWithoutWhereConfiguration": {
 			"oneOf": [
 				{ "$ref": "#/$defs/RulePlainConfiguration" },
@@ -8460,6 +8477,16 @@
 			"type": "object",
 			"additionalProperties": false
 		},
+		"NoVueDeprecatedFilterConfiguration": {
+			"oneOf": [
+				{ "$ref": "#/$defs/RulePlainConfiguration" },
+				{ "$ref": "#/$defs/RuleWithNoVueDeprecatedFilterOptions" }
+			]
+		},
+		"NoVueDeprecatedFilterOptions": {
+			"type": "object",
+			"additionalProperties": false
+		},
 		"NoVueDeprecatedFunctionalTemplateConfiguration": {
 			"oneOf": [
 				{ "$ref": "#/$defs/RulePlainConfiguration" },
@@ -9114,6 +9141,16 @@
 			"type": "object",
 			"additionalProperties": false
 		},
+		"NoYamlEmptyMapValuesConfiguration": {
+			"oneOf": [
+				{ "$ref": "#/$defs/RulePlainConfiguration" },
+				{ "$ref": "#/$defs/RuleWithNoYamlEmptyMapValuesOptions" }
+			]
+		},
+		"NoYamlEmptyMapValuesOptions": {
+			"type": "object",
+			"additionalProperties": false
+		},
 		"NoYodaExpressionConfiguration": {
 			"oneOf": [
 				{ "$ref": "#/$defs/RulePlainConfiguration" },
@@ -9326,6 +9363,15 @@
 					"description": "Disallow two comparisons of the same values that can be combined into one.\nSee https://biomejs.dev/linter/rules/no-double-comparison",
 					"anyOf": [
 						{ "$ref": "#/$defs/NoDoubleComparisonConfiguration" },
+						{ "type": "null" }
+					]
+				},
+				"noDrizzleDbObjectInsideTransaction": {
+					"description": "Disallow using a Drizzle ORM instance inside its own transaction callback.\nSee https://biomejs.dev/linter/rules/no-drizzle-db-object-inside-transaction",
+					"anyOf": [
+						{
+							"$ref": "#/$defs/NoDrizzleDbObjectInsideTransactionConfiguration"
+						},
 						{ "type": "null" }
 					]
 				},
@@ -10198,6 +10244,13 @@
 						{ "type": "null" }
 					]
 				},
+				"noVueDeprecatedFilter": {
+					"description": "Disallow the filter syntax that Vue 3 removed.\nSee https://biomejs.dev/linter/rules/no-vue-deprecated-filter",
+					"anyOf": [
+						{ "$ref": "#/$defs/NoVueDeprecatedFilterConfiguration" },
+						{ "type": "null" }
+					]
+				},
 				"noVueDeprecatedFunctionalTemplate": {
 					"description": "Disallow the deprecated functional attribute on the \\<template> of a Vue component.\nSee https://biomejs.dev/linter/rules/no-vue-deprecated-functional-template",
 					"anyOf": [
@@ -10540,6 +10593,13 @@
 					"description": "Disallow boolean values as keys in YAML.\nSee https://biomejs.dev/linter/rules/no-yaml-boolean-keys",
 					"anyOf": [
 						{ "$ref": "#/$defs/NoYamlBooleanKeysConfiguration" },
+						{ "type": "null" }
+					]
+				},
+				"noYamlEmptyMapValues": {
+					"description": "Disallow keys without a value in YAML maps.\nSee https://biomejs.dev/linter/rules/no-yaml-empty-map-values",
+					"anyOf": [
+						{ "$ref": "#/$defs/NoYamlEmptyMapValuesConfiguration" },
 						{ "type": "null" }
 					]
 				},
@@ -11166,6 +11226,13 @@
 					"description": "Enforce a consistent delimiter between the item and the list in v-for directives.\nSee https://biomejs.dev/linter/rules/use-vue-consistent-v-for-delimiter",
 					"anyOf": [
 						{ "$ref": "#/$defs/UseVueConsistentVForDelimiterConfiguration" },
+						{ "type": "null" }
+					]
+				},
+				"useVueConsistentVOnHandlerStyle": {
+					"description": "Enforce a consistent style for event handlers in Vue v-on directives.\nSee https://biomejs.dev/linter/rules/use-vue-consistent-v-on-handler-style",
+					"anyOf": [
+						{ "$ref": "#/$defs/UseVueConsistentVOnHandlerStyleConfiguration" },
 						{ "type": "null" }
 					]
 				},
@@ -13042,6 +13109,17 @@
 				},
 				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
 				"options": { "$ref": "#/$defs/NoDoubleEqualsOptions" }
+			},
+			"additionalProperties": false,
+			"required": ["level"]
+		},
+		"RuleWithNoDrizzleDbObjectInsideTransactionOptions": {
+			"type": "object",
+			"properties": {
+				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
+				"options": {
+					"$ref": "#/$defs/NoDrizzleDbObjectInsideTransactionOptions"
+				}
 			},
 			"additionalProperties": false,
 			"required": ["level"]
@@ -16871,6 +16949,15 @@
 			"additionalProperties": false,
 			"required": ["level"]
 		},
+		"RuleWithNoVueDeprecatedFilterOptions": {
+			"type": "object",
+			"properties": {
+				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
+				"options": { "$ref": "#/$defs/NoVueDeprecatedFilterOptions" }
+			},
+			"additionalProperties": false,
+			"required": ["level"]
+		},
 		"RuleWithNoVueDeprecatedFunctionalTemplateOptions": {
 			"type": "object",
 			"properties": {
@@ -17428,6 +17515,15 @@
 			"properties": {
 				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
 				"options": { "$ref": "#/$defs/NoYamlBooleanKeysOptions" }
+			},
+			"additionalProperties": false,
+			"required": ["level"]
+		},
+		"RuleWithNoYamlEmptyMapValuesOptions": {
+			"type": "object",
+			"properties": {
+				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
+				"options": { "$ref": "#/$defs/NoYamlEmptyMapValuesOptions" }
 			},
 			"additionalProperties": false,
 			"required": ["level"]
@@ -20091,6 +20187,19 @@
 				},
 				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
 				"options": { "$ref": "#/$defs/UseVueConsistentVForDelimiterOptions" }
+			},
+			"additionalProperties": false,
+			"required": ["level"]
+		},
+		"RuleWithUseVueConsistentVOnHandlerStyleOptions": {
+			"type": "object",
+			"properties": {
+				"fix": {
+					"description": "Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.",
+					"anyOf": [{ "$ref": "#/$defs/FixKind" }, { "type": "null" }]
+				},
+				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
+				"options": { "$ref": "#/$defs/UseVueConsistentVOnHandlerStyleOptions" }
 			},
 			"additionalProperties": false,
 			"required": ["level"]
@@ -26211,6 +26320,25 @@
 			},
 			"additionalProperties": false
 		},
+		"UseVueConsistentVOnHandlerStyleConfiguration": {
+			"oneOf": [
+				{ "$ref": "#/$defs/RulePlainConfiguration" },
+				{ "$ref": "#/$defs/RuleWithUseVueConsistentVOnHandlerStyleOptions" }
+			]
+		},
+		"UseVueConsistentVOnHandlerStyleOptions": {
+			"type": "object",
+			"properties": {
+				"style": {
+					"description": "The handler style to enforce in `v-on` directives.\nIf omitted, `\"methodOrInlineFunction\"` is used.",
+					"anyOf": [
+						{ "$ref": "#/$defs/VueVOnHandlerStyle" },
+						{ "type": "null" }
+					]
+				}
+			},
+			"additionalProperties": false
+		},
 		"UseVueConsistentVOnStyleConfiguration": {
 			"oneOf": [
 				{ "$ref": "#/$defs/RulePlainConfiguration" },
@@ -26940,6 +27068,31 @@
 			]
 		},
 		"VueVForDelimiter": { "type": "string", "enum": ["in", "of"] },
+		"VueVOnHandlerStyle": {
+			"description": "A style of event handler in a `v-on` directive.",
+			"oneOf": [
+				{
+					"description": "Use the name of a method, as in `@click=\"handler\"`. Where a method name can't be used, use\nan inline function, as in `@click=\"() => handler(item)\"`.",
+					"type": "string",
+					"const": "methodOrInlineFunction"
+				},
+				{
+					"description": "Use the name of a method, as in `@click=\"handler\"`. Where a method name can't be used, use\nan inline handler, as in `@click=\"handler(item)\"`.",
+					"type": "string",
+					"const": "methodOrInline"
+				},
+				{
+					"description": "Use an inline function, as in `@click=\"() => handler()\"`.",
+					"type": "string",
+					"const": "inlineFunction"
+				},
+				{
+					"description": "Use an inline handler, as in `@click=\"handler()\"`.",
+					"type": "string",
+					"const": "inline"
+				}
+			]
+		},
 		"WhitespaceSensitivity": {
 			"description": "Controls how the formatter treats whitespace around text and child elements in HTML, Vue,\nSvelte, and Astro markup.\n\nThe following two cases won't produce the same output:\n\n|                |      html      |    output    |\n| -------------- | :------------: | :----------: |\n| with spaces    | `1<b> 2 </b>3` | 1<b> 2 </b>3 |\n| without spaces |  `1<b>2</b>3`  |  1<b>2</b>3  |\n\nThis happens because whitespace is significant in inline elements.\n\nAs a consequence of this, the formatter must format blocks that look like this (assume a small line width, <20):\n```html\n<span>really long content</span>\n```\nas this, where the content hugs the tags:\n```html\n<span\n   >really long content</span\n>\n```\n\nNote that this is only necessary for inline elements. Block elements do not have this restriction.",
 			"oneOf": [

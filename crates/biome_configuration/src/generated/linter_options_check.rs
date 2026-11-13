@@ -359,6 +359,7 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         "noDoubleEquals",
         TypeId::of::<biome_rule_options::no_double_equals::NoDoubleEqualsOptions>(),
     ));
+    result.push(("nursery", "noDrizzleDbObjectInsideTransaction", TypeId::of::<biome_rule_options::no_drizzle_db_object_inside_transaction::NoDrizzleDbObjectInsideTransactionOptions>()));
     result.push((
         "suspicious",
         "noDrizzleDeleteWithoutWhere",
@@ -2110,6 +2111,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
             biome_rule_options::no_vue_deprecated_events_api::NoVueDeprecatedEventsApiOptions,
         >(),
     ));
+    result.push((
+        "nursery",
+        "noVueDeprecatedFilter",
+        TypeId::of::<biome_rule_options::no_vue_deprecated_filter::NoVueDeprecatedFilterOptions>(),
+    ));
     result.push(("nursery", "noVueDeprecatedFunctionalTemplate", TypeId::of::<biome_rule_options::no_vue_deprecated_functional_template::NoVueDeprecatedFunctionalTemplateOptions>()));
     result.push(("nursery", "noVueDeprecatedHtmlElementIs", TypeId::of::<biome_rule_options::no_vue_deprecated_html_element_is::NoVueDeprecatedHtmlElementIsOptions>()));
     result.push(("nursery", "noVueDeprecatedInlineTemplate", TypeId::of::<biome_rule_options::no_vue_deprecated_inline_template::NoVueDeprecatedInlineTemplateOptions>()));
@@ -2348,6 +2354,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         "nursery",
         "noYamlBooleanKeys",
         TypeId::of::<biome_rule_options::no_yaml_boolean_keys::NoYamlBooleanKeysOptions>(),
+    ));
+    result.push((
+        "nursery",
+        "noYamlEmptyMapValues",
+        TypeId::of::<biome_rule_options::no_yaml_empty_map_values::NoYamlEmptyMapValuesOptions>(),
     ));
     result.push((
         "style",
@@ -3479,6 +3490,7 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         >(),
     ));
     result.push(("nursery", "useVueConsistentVForDelimiter", TypeId::of::<biome_rule_options::use_vue_consistent_v_for_delimiter::UseVueConsistentVForDelimiterOptions>()));
+    result.push(("nursery", "useVueConsistentVOnHandlerStyle", TypeId::of::<biome_rule_options::use_vue_consistent_v_on_handler_style::UseVueConsistentVOnHandlerStyleOptions>()));
     result.push((
         "style",
         "useVueConsistentVOnStyle",

@@ -12,6 +12,7 @@ static ASTRO_FILTERS: LazyLock<Vec<RuleFilter<'static>>> = LazyLock::new(|| {
 });
 static DRIZZLE_FILTERS: LazyLock<Vec<RuleFilter<'static>>> = LazyLock::new(|| {
     vec![
+        RuleFilter::Rule("nursery", "noDrizzleDbObjectInsideTransaction"),
         RuleFilter::Rule("suspicious", "noDrizzleDeleteWithoutWhere"),
         RuleFilter::Rule("suspicious", "noDrizzleUpdateWithoutWhere"),
     ]
@@ -258,6 +259,7 @@ static VUE_FILTERS: LazyLock<Vec<RuleFilter<'static>>> = LazyLock::new(|| {
         RuleFilter::Rule("nursery", "noVueDeprecatedDeleteSet"),
         RuleFilter::Rule("nursery", "noVueDeprecatedDestroyedLifecycle"),
         RuleFilter::Rule("nursery", "noVueDeprecatedEventsApi"),
+        RuleFilter::Rule("nursery", "noVueDeprecatedFilter"),
         RuleFilter::Rule("nursery", "noVueDeprecatedFunctionalTemplate"),
         RuleFilter::Rule("nursery", "noVueDeprecatedHtmlElementIs"),
         RuleFilter::Rule("nursery", "noVueDeprecatedInlineTemplate"),
@@ -316,6 +318,7 @@ static VUE_FILTERS: LazyLock<Vec<RuleFilter<'static>>> = LazyLock::new(|| {
         RuleFilter::Rule("nursery", "useVueConsistentEventHyphenation"),
         RuleFilter::Rule("nursery", "useVueConsistentPropNameCasing"),
         RuleFilter::Rule("nursery", "useVueConsistentVForDelimiter"),
+        RuleFilter::Rule("nursery", "useVueConsistentVOnHandlerStyle"),
         RuleFilter::Rule("nursery", "useVueConsistentVSlotStyle"),
         RuleFilter::Rule("nursery", "useVueDefaultExport"),
         RuleFilter::Rule("nursery", "useVueDefaultProp"),

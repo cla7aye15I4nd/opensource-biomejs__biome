@@ -3043,6 +3043,11 @@ export interface Nursery {
 	 */
 	noDoubleComparison?: NoDoubleComparisonConfiguration;
 	/**
+	 * Disallow using a Drizzle ORM instance inside its own transaction callback.
+	 * See https://biomejs.dev/linter/rules/no-drizzle-db-object-inside-transaction
+	 */
+	noDrizzleDbObjectInsideTransaction?: NoDrizzleDbObjectInsideTransactionConfiguration;
+	/**
 	 * Disallow two keys with the same name inside YAML maps.
 	 * See https://biomejs.dev/linter/rules/no-duplicate-map-keys
 	 */
@@ -3658,6 +3663,11 @@ export interface Nursery {
 	 */
 	noVueDeprecatedEventsApi?: NoVueDeprecatedEventsApiConfiguration;
 	/**
+	 * Disallow the filter syntax that Vue 3 removed.
+	 * See https://biomejs.dev/linter/rules/no-vue-deprecated-filter
+	 */
+	noVueDeprecatedFilter?: NoVueDeprecatedFilterConfiguration;
+	/**
 	 * Disallow the deprecated functional attribute on the \<template> of a Vue component.
 	 * See https://biomejs.dev/linter/rules/no-vue-deprecated-functional-template
 	 */
@@ -3902,6 +3912,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/no-yaml-boolean-keys
 	 */
 	noYamlBooleanKeys?: NoYamlBooleanKeysConfiguration;
+	/**
+	 * Disallow keys without a value in YAML maps.
+	 * See https://biomejs.dev/linter/rules/no-yaml-empty-map-values
+	 */
+	noYamlEmptyMapValues?: NoYamlEmptyMapValuesConfiguration;
 	/**
 	 * Disallow number literals with zero fractions or dangling dots.
 	 * See https://biomejs.dev/linter/rules/no-zero-fractions
@@ -4342,6 +4357,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/use-vue-consistent-v-for-delimiter
 	 */
 	useVueConsistentVForDelimiter?: UseVueConsistentVForDelimiterConfiguration;
+	/**
+	 * Enforce a consistent style for event handlers in Vue v-on directives.
+	 * See https://biomejs.dev/linter/rules/use-vue-consistent-v-on-handler-style
+	 */
+	useVueConsistentVOnHandlerStyle?: UseVueConsistentVOnHandlerStyleConfiguration;
 	/**
 	 * Enforce a consistent style for v-slot in Vue templates.
 	 * See https://biomejs.dev/linter/rules/use-vue-consistent-v-slot-style
@@ -6725,6 +6745,9 @@ export type NoDisabledAttributeConfiguration =
 export type NoDoubleComparisonConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoDoubleComparisonOptions;
+export type NoDrizzleDbObjectInsideTransactionConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoDrizzleDbObjectInsideTransactionOptions;
 export type NoDuplicateMapKeysConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoDuplicateMapKeysOptions;
@@ -7094,6 +7117,9 @@ export type NoVueDeprecatedDestroyedLifecycleConfiguration =
 export type NoVueDeprecatedEventsApiConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoVueDeprecatedEventsApiOptions;
+export type NoVueDeprecatedFilterConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoVueDeprecatedFilterOptions;
 export type NoVueDeprecatedFunctionalTemplateConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoVueDeprecatedFunctionalTemplateOptions;
@@ -7241,6 +7267,9 @@ export type NoXorAsExponentiationConfiguration =
 export type NoYamlBooleanKeysConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoYamlBooleanKeysOptions;
+export type NoYamlEmptyMapValuesConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoYamlEmptyMapValuesOptions;
 export type NoZeroFractionsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoZeroFractionsOptions;
@@ -7505,6 +7534,9 @@ export type UseVueConsistentPropNameCasingConfiguration =
 export type UseVueConsistentVForDelimiterConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseVueConsistentVForDelimiterOptions;
+export type UseVueConsistentVOnHandlerStyleConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseVueConsistentVOnHandlerStyleOptions;
 export type UseVueConsistentVSlotStyleConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseVueConsistentVSlotStyleOptions;
@@ -9793,6 +9825,10 @@ export interface RuleWithNoDoubleComparisonOptions {
 	level: RulePlainConfiguration;
 	options?: NoDoubleComparisonOptions;
 }
+export interface RuleWithNoDrizzleDbObjectInsideTransactionOptions {
+	level: RulePlainConfiguration;
+	options?: NoDrizzleDbObjectInsideTransactionOptions;
+}
 export interface RuleWithNoDuplicateMapKeysOptions {
 	level: RulePlainConfiguration;
 	options?: NoDuplicateMapKeysOptions;
@@ -10433,6 +10469,10 @@ export interface RuleWithNoVueDeprecatedEventsApiOptions {
 	level: RulePlainConfiguration;
 	options?: NoVueDeprecatedEventsApiOptions;
 }
+export interface RuleWithNoVueDeprecatedFilterOptions {
+	level: RulePlainConfiguration;
+	options?: NoVueDeprecatedFilterOptions;
+}
 export interface RuleWithNoVueDeprecatedFunctionalTemplateOptions {
 	level: RulePlainConfiguration;
 	options?: NoVueDeprecatedFunctionalTemplateOptions;
@@ -10656,6 +10696,10 @@ export interface RuleWithNoXorAsExponentiationOptions {
 export interface RuleWithNoYamlBooleanKeysOptions {
 	level: RulePlainConfiguration;
 	options?: NoYamlBooleanKeysOptions;
+}
+export interface RuleWithNoYamlEmptyMapValuesOptions {
+	level: RulePlainConfiguration;
+	options?: NoYamlEmptyMapValuesOptions;
 }
 export interface RuleWithNoZeroFractionsOptions {
 	/**
@@ -11176,6 +11220,14 @@ export interface RuleWithUseVueConsistentVForDelimiterOptions {
 	fix?: FixKind;
 	level: RulePlainConfiguration;
 	options?: UseVueConsistentVForDelimiterOptions;
+}
+export interface RuleWithUseVueConsistentVOnHandlerStyleOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: UseVueConsistentVOnHandlerStyleOptions;
 }
 export interface RuleWithUseVueConsistentVSlotStyleOptions {
 	/**
@@ -13337,6 +13389,12 @@ export type NoConstantComparisonsOptions = {};
 export type NoDanglingUnderscoreOptions = {};
 export type NoDisabledAttributeOptions = {};
 export type NoDoubleComparisonOptions = {};
+export interface NoDrizzleDbObjectInsideTransactionOptions {
+	/**
+	 * List of variable names to consider as Drizzle ORM instances.
+	 */
+	drizzleObjectName?: string[];
+}
 export type NoDuplicateMapKeysOptions = {};
 export interface NoDuplicateTypeConstituentsOptions {
 	/**
@@ -13715,6 +13773,7 @@ export type NoVueDeprecatedConfigKeyCodesOptions = {};
 export type NoVueDeprecatedDeleteSetOptions = {};
 export type NoVueDeprecatedDestroyedLifecycleOptions = {};
 export type NoVueDeprecatedEventsApiOptions = {};
+export type NoVueDeprecatedFilterOptions = {};
 export type NoVueDeprecatedFunctionalTemplateOptions = {};
 export type NoVueDeprecatedHtmlElementIsOptions = {};
 export type NoVueDeprecatedInlineTemplateOptions = {};
@@ -13835,6 +13894,7 @@ export type NoVueVTextVHtmlOnComponentOptions = {};
 export type NoVueWatchAfterAwaitOptions = {};
 export type NoXorAsExponentiationOptions = {};
 export type NoYamlBooleanKeysOptions = {};
+export type NoYamlEmptyMapValuesOptions = {};
 export type NoZeroFractionsOptions = {};
 export type NoZeroLengthUnitOptions = {};
 export type UseAccessorPairsOptions = {};
@@ -14193,6 +14253,13 @@ export interface UseVueConsistentVForDelimiterOptions {
 	 * `"in"` or `"of"`. Defaults to `"in"`.
 	 */
 	delimiter?: VueVForDelimiter;
+}
+export interface UseVueConsistentVOnHandlerStyleOptions {
+	/**
+	 * The handler style to enforce in `v-on` directives.
+	 * If omitted, `"methodOrInlineFunction"` is used.
+	 */
+	style?: VueVOnHandlerStyle;
 }
 export interface UseVueConsistentVSlotStyleOptions {
 	/**
@@ -15272,6 +15339,14 @@ export type EventHyphenation = "always" | "never";
 export type PropNameCasing = "camelCase" | "snake_case";
 export type VueVForDelimiter = "in" | "of";
 /**
+ * A style of event handler in a `v-on` directive.
+ */
+export type VueVOnHandlerStyle =
+	| "methodOrInlineFunction"
+	| "methodOrInline"
+	| "inlineFunction"
+	| "inline";
+/**
  * How a default slot is written.
  */
 export type VueSlotStyle = "shorthand" | "longhand" | "v-slot";
@@ -15795,6 +15870,7 @@ export type Category =
 	| "lint/nursery/noDanglingUnderscore"
 	| "lint/nursery/noDisabledAttribute"
 	| "lint/nursery/noDoubleComparison"
+	| "lint/nursery/noDrizzleDbObjectInsideTransaction"
 	| "lint/nursery/noDrizzleDeleteWithoutWhere"
 	| "lint/nursery/noDrizzleUpdateWithoutWhere"
 	| "lint/nursery/noDuplicateFieldDefinitionNames"
@@ -15940,6 +16016,7 @@ export type Category =
 	| "lint/nursery/noVueComputedPropertiesInData"
 	| "lint/nursery/noVueDefineModelDefault"
 	| "lint/nursery/noVueDeprecatedConfigKeyCodes"
+	| "lint/nursery/noVueDeprecatedFilter"
 	| "lint/nursery/noVueDeprecatedDeleteSet"
 	| "lint/nursery/noVueDeprecatedDestroyedLifecycle"
 	| "lint/nursery/noVueDeprecatedEventsApi"
@@ -15995,6 +16072,7 @@ export type Category =
 	| "lint/nursery/noVueWatchAfterAwait"
 	| "lint/nursery/noXorAsExponentiation"
 	| "lint/nursery/noYamlBooleanKeys"
+	| "lint/nursery/noYamlEmptyMapValues"
 	| "lint/nursery/noZeroFractions"
 	| "lint/nursery/noZeroLengthUnit"
 	| "lint/nursery/useAccessorPairs"
@@ -16100,6 +16178,7 @@ export type Category =
 	| "lint/nursery/useVueConsistentEventHyphenation"
 	| "lint/nursery/useVueConsistentPropNameCasing"
 	| "lint/nursery/useVueConsistentVForDelimiter"
+	| "lint/nursery/useVueConsistentVOnHandlerStyle"
 	| "lint/nursery/useVueConsistentVSlotStyle"
 	| "lint/nursery/useVueDefaultExport"
 	| "lint/nursery/useVueDefaultProp"
