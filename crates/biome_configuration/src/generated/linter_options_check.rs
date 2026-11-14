@@ -142,6 +142,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
     result.push(("nursery", "noBooleanSortComparator", TypeId::of::<biome_rule_options::no_boolean_sort_comparator::NoBooleanSortComparatorOptions>()));
     result.push((
         "nursery",
+        "noBufferConstructor",
+        TypeId::of::<biome_rule_options::no_buffer_constructor::NoBufferConstructorOptions>(),
+    ));
+    result.push((
+        "nursery",
         "noBunModules",
         TypeId::of::<biome_rule_options::no_bun_modules::NoBunModulesOptions>(),
     ));
@@ -2170,6 +2175,13 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
     ));
     result.push((
         "nursery",
+        "noVueExportInScriptSetup",
+        TypeId::of::<
+            biome_rule_options::no_vue_export_in_script_setup::NoVueExportInScriptSetupOptions,
+        >(),
+    ));
+    result.push((
+        "nursery",
         "noVueExposeAfterAwait",
         TypeId::of::<biome_rule_options::no_vue_expose_after_await::NoVueExposeAfterAwaitOptions>(),
     ));
@@ -2357,8 +2369,20 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
     ));
     result.push((
         "nursery",
+        "noYamlEmptyMapKeys",
+        TypeId::of::<biome_rule_options::no_yaml_empty_map_keys::NoYamlEmptyMapKeysOptions>(),
+    ));
+    result.push((
+        "nursery",
         "noYamlEmptyMapValues",
         TypeId::of::<biome_rule_options::no_yaml_empty_map_values::NoYamlEmptyMapValuesOptions>(),
+    ));
+    result.push((
+        "nursery",
+        "noYamlEmptySequenceEntries",
+        TypeId::of::<
+            biome_rule_options::no_yaml_empty_sequence_entries::NoYamlEmptySequenceEntriesOptions,
+        >(),
     ));
     result.push((
         "style",
@@ -2486,6 +2510,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         "a11y",
         "useButtonType",
         TypeId::of::<biome_rule_options::use_button_type::UseButtonTypeOptions>(),
+    ));
+    result.push((
+        "nursery",
+        "useCalledWith",
+        TypeId::of::<biome_rule_options::use_called_with::UseCalledWithOptions>(),
     ));
     result.push((
         "nursery",
@@ -2691,6 +2720,14 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         "useExpectToContain",
         TypeId::of::<biome_rule_options::use_expect_to_contain::UseExpectToContainOptions>(),
     ));
+    result.push((
+        "nursery",
+        "useExpectToHaveBeenCalled",
+        TypeId::of::<
+            biome_rule_options::use_expect_to_have_been_called::UseExpectToHaveBeenCalledOptions,
+        >(),
+    ));
+    result.push(("nursery", "useExpectToHaveBeenCalledTimes", TypeId::of::<biome_rule_options::use_expect_to_have_been_called_times::UseExpectToHaveBeenCalledTimesOptions>()));
     result.push((
         "style",
         "useExplicitLengthCheck",
@@ -3259,6 +3296,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         TypeId::of::<biome_rule_options::use_spread_over_apply::UseSpreadOverApplyOptions>(),
     ));
     result.push((
+        "nursery",
+        "useSpyOn",
+        TypeId::of::<biome_rule_options::use_spy_on::UseSpyOnOptions>(),
+    ));
+    result.push((
         "suspicious",
         "useStaticResponseMethods",
         TypeId::of::<
@@ -3371,6 +3413,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         TypeId::of::<biome_rule_options::use_top_level_regex::UseTopLevelRegexOptions>(),
     ));
     result.push((
+        "nursery",
+        "useTopLevelRequire",
+        TypeId::of::<biome_rule_options::use_top_level_require::UseTopLevelRequireOptions>(),
+    ));
+    result.push((
         "style",
         "useTrimStartEnd",
         TypeId::of::<biome_rule_options::use_trim_start_end::UseTrimStartEndOptions>(),
@@ -3438,6 +3485,13 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         "a11y",
         "useValidLang",
         TypeId::of::<biome_rule_options::use_valid_lang::UseValidLangOptions>(),
+    ));
+    result.push((
+        "nursery",
+        "useValidNamespaceImports",
+        TypeId::of::<
+            biome_rule_options::use_valid_namespace_imports::UseValidNamespaceImportsOptions,
+        >(),
     ));
     result.push((
         "nursery",

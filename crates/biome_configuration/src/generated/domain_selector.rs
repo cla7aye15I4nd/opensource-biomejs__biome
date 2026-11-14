@@ -65,6 +65,7 @@ static PROJECT_FILTERS: LazyLock<Vec<RuleFilter<'static>>> = LazyLock::new(|| {
         RuleFilter::Rule("nursery", "noUndeclaredCustomProperties"),
         RuleFilter::Rule("nursery", "noUnresolvedDefaultImport"),
         RuleFilter::Rule("nursery", "useTailwindSortedClasses"),
+        RuleFilter::Rule("nursery", "useValidNamespaceImports"),
         RuleFilter::Rule("suspicious", "noDeprecatedImports"),
         RuleFilter::Rule("suspicious", "noImportCycles"),
     ]
@@ -182,8 +183,12 @@ static TANSTACKQUERY_FILTERS: LazyLock<Vec<RuleFilter<'static>>> = LazyLock::new
 static TEST_FILTERS: LazyLock<Vec<RuleFilter<'static>>> = LazyLock::new(|| {
     vec![
         RuleFilter::Rule("complexity", "noExcessiveNestedTestSuites"),
+        RuleFilter::Rule("nursery", "useCalledWith"),
         RuleFilter::Rule("nursery", "useExpectToContain"),
+        RuleFilter::Rule("nursery", "useExpectToHaveBeenCalled"),
+        RuleFilter::Rule("nursery", "useExpectToHaveBeenCalledTimes"),
         RuleFilter::Rule("nursery", "useLowercaseTestTitle"),
+        RuleFilter::Rule("nursery", "useSpyOn"),
         RuleFilter::Rule("nursery", "useValidTestTitle"),
         RuleFilter::Rule("style", "useConsistentTestIt"),
         RuleFilter::Rule("style", "useTestHooksInOrder"),
@@ -275,6 +280,7 @@ static VUE_FILTERS: LazyLock<Vec<RuleFilter<'static>>> = LazyLock::new(|| {
         RuleFilter::Rule("nursery", "noVueDeprecatedVIs"),
         RuleFilter::Rule("nursery", "noVueDeprecatedVOnNativeModifier"),
         RuleFilter::Rule("nursery", "noVueExcessiveProps"),
+        RuleFilter::Rule("nursery", "noVueExportInScriptSetup"),
         RuleFilter::Rule("nursery", "noVueExposeAfterAwait"),
         RuleFilter::Rule("nursery", "noVueLifecycleAfterAwait"),
         RuleFilter::Rule("nursery", "noVueLoneTemplate"),

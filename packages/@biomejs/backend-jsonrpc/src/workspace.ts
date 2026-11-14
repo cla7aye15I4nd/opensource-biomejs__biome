@@ -3003,6 +3003,11 @@ export interface Nursery {
 	 */
 	noBooleanSortComparator?: NoBooleanSortComparatorConfiguration;
 	/**
+	 * Disallow the deprecated Buffer() constructor in Node.js.
+	 * See https://biomejs.dev/linter/rules/no-buffer-constructor
+	 */
+	noBufferConstructor?: NoBufferConstructorConfiguration;
+	/**
 	 * Forbid the use of Bun builtin modules.
 	 * See https://biomejs.dev/linter/rules/no-bun-modules
 	 */
@@ -3743,6 +3748,11 @@ export interface Nursery {
 	 */
 	noVueExcessiveProps?: NoVueExcessivePropsConfiguration;
 	/**
+	 * Disallow export in \<script setup>.
+	 * See https://biomejs.dev/linter/rules/no-vue-export-in-script-setup
+	 */
+	noVueExportInScriptSetup?: NoVueExportInScriptSetupConfiguration;
+	/**
 	 * Disallow calling expose() or defineExpose() after an await in setup().
 	 * See https://biomejs.dev/linter/rules/no-vue-expose-after-await
 	 */
@@ -3913,10 +3923,20 @@ export interface Nursery {
 	 */
 	noYamlBooleanKeys?: NoYamlBooleanKeysConfiguration;
 	/**
+	 * Disallow empty keys in YAML maps.
+	 * See https://biomejs.dev/linter/rules/no-yaml-empty-map-keys
+	 */
+	noYamlEmptyMapKeys?: NoYamlEmptyMapKeysConfiguration;
+	/**
 	 * Disallow keys without a value in YAML maps.
 	 * See https://biomejs.dev/linter/rules/no-yaml-empty-map-values
 	 */
 	noYamlEmptyMapValues?: NoYamlEmptyMapValuesConfiguration;
+	/**
+	 * Disallow empty items in YAML lists.
+	 * See https://biomejs.dev/linter/rules/no-yaml-empty-sequence-entries
+	 */
+	noYamlEmptySequenceEntries?: NoYamlEmptySequenceEntriesConfiguration;
 	/**
 	 * Disallow number literals with zero fractions or dangling dots.
 	 * See https://biomejs.dev/linter/rules/no-zero-fractions
@@ -3962,6 +3982,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/use-block-statement-over-iife
 	 */
 	useBlockStatementOverIife?: UseBlockStatementOverIifeConfiguration;
+	/**
+	 * Enforce using toHaveBeenCalledWith() to check the arguments of a function call.
+	 * See https://biomejs.dev/linter/rules/use-called-with
+	 */
+	useCalledWith?: UseCalledWithConfiguration;
 	/**
 	 * Require constructor names to begin with a capital letter.
 	 * See https://biomejs.dev/linter/rules/use-capitalized-constructors
@@ -4042,6 +4067,16 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/use-expect-to-contain
 	 */
 	useExpectToContain?: UseExpectToContainConfiguration;
+	/**
+	 * Enforce using toHaveBeenCalled() to check whether a mock function was called.
+	 * See https://biomejs.dev/linter/rules/use-expect-to-have-been-called
+	 */
+	useExpectToHaveBeenCalled?: UseExpectToHaveBeenCalledConfiguration;
+	/**
+	 * Enforce using toHaveBeenCalledTimes() to check how many times a mock function was called.
+	 * See https://biomejs.dev/linter/rules/use-expect-to-have-been-called-times
+	 */
+	useExpectToHaveBeenCalledTimes?: UseExpectToHaveBeenCalledTimesConfiguration;
 	/**
 	 * Require explicit return types on functions and class methods.
 	 * See https://biomejs.dev/linter/rules/use-explicit-return-type
@@ -4213,6 +4248,11 @@ export interface Nursery {
 	 */
 	useSingleTopLevelHeading?: UseSingleTopLevelHeadingConfiguration;
 	/**
+	 * Enforce using jest.spyOn() or vi.spyOn() instead of overwriting a property with a mock function.
+	 * See https://biomejs.dev/linter/rules/use-spy-on
+	 */
+	useSpyOn?: UseSpyOnConfiguration;
+	/**
 	 * Require unambiguous boolean expressions in conditions.
 	 * See https://biomejs.dev/linter/rules/use-strict-boolean-expressions
 	 */
@@ -4293,6 +4333,11 @@ export interface Nursery {
 	 */
 	useTopLevelHeading?: UseTopLevelHeadingConfiguration;
 	/**
+	 * Require require() calls to be placed at the top level of the module.
+	 * See https://biomejs.dev/linter/rules/use-top-level-require
+	 */
+	useTopLevelRequire?: UseTopLevelRequireConfiguration;
+	/**
 	 * Enforce the use of the unary minus operator over multiplying or dividing by -1.
 	 * See https://biomejs.dev/linter/rules/use-unary-minus
 	 */
@@ -4302,6 +4347,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/use-valid-character-comparison
 	 */
 	useValidCharacterComparison?: UseValidCharacterComparisonConfiguration;
+	/**
+	 * Require that names read from a namespace import are exported by the imported module.
+	 * See https://biomejs.dev/linter/rules/use-valid-namespace-imports
+	 */
+	useValidNamespaceImports?: UseValidNamespaceImportsConfiguration;
 	/**
 	 * Enforce valid titles for unit test cases and test suites.
 	 * See https://biomejs.dev/linter/rules/use-valid-test-title
@@ -6721,6 +6771,9 @@ export type NoBaseToStringConfiguration =
 export type NoBooleanSortComparatorConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoBooleanSortComparatorOptions;
+export type NoBufferConstructorConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoBufferConstructorOptions;
 export type NoBunModulesConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoBunModulesOptions;
@@ -7165,6 +7218,9 @@ export type NoVueDeprecatedVOnNativeModifierConfiguration =
 export type NoVueExcessivePropsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoVueExcessivePropsOptions;
+export type NoVueExportInScriptSetupConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoVueExportInScriptSetupOptions;
 export type NoVueExposeAfterAwaitConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoVueExposeAfterAwaitOptions;
@@ -7267,9 +7323,15 @@ export type NoXorAsExponentiationConfiguration =
 export type NoYamlBooleanKeysConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoYamlBooleanKeysOptions;
+export type NoYamlEmptyMapKeysConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoYamlEmptyMapKeysOptions;
 export type NoYamlEmptyMapValuesConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoYamlEmptyMapValuesOptions;
+export type NoYamlEmptySequenceEntriesConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoYamlEmptySequenceEntriesOptions;
 export type NoZeroFractionsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoZeroFractionsOptions;
@@ -7297,6 +7359,9 @@ export type UseBigintLiteralsConfiguration =
 export type UseBlockStatementOverIifeConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseBlockStatementOverIifeOptions;
+export type UseCalledWithConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseCalledWithOptions;
 export type UseCapitalizedConstructorsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseCapitalizedConstructorsOptions;
@@ -7345,6 +7410,12 @@ export type UseExhaustiveSwitchCasesConfiguration =
 export type UseExpectToContainConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseExpectToContainOptions;
+export type UseExpectToHaveBeenCalledConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseExpectToHaveBeenCalledOptions;
+export type UseExpectToHaveBeenCalledTimesConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseExpectToHaveBeenCalledTimesOptions;
 export type UseExplicitReturnTypeConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseExplicitReturnTypeOptions;
@@ -7447,6 +7518,9 @@ export type UseSimplifiedBooleanReturnConfiguration =
 export type UseSingleTopLevelHeadingConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseSingleTopLevelHeadingOptions;
+export type UseSpyOnConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseSpyOnOptions;
 export type UseStrictBooleanExpressionsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseStrictBooleanExpressionsOptions;
@@ -7495,12 +7569,18 @@ export type UseTanstackQueryStableQueryClientConfiguration =
 export type UseTopLevelHeadingConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseTopLevelHeadingOptions;
+export type UseTopLevelRequireConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseTopLevelRequireOptions;
 export type UseUnaryMinusConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseUnaryMinusOptions;
 export type UseValidCharacterComparisonConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseValidCharacterComparisonOptions;
+export type UseValidNamespaceImportsConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseValidNamespaceImportsOptions;
 export type UseValidTestTitleConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseValidTestTitleOptions;
@@ -9777,6 +9857,10 @@ export interface RuleWithNoBooleanSortComparatorOptions {
 	level: RulePlainConfiguration;
 	options?: NoBooleanSortComparatorOptions;
 }
+export interface RuleWithNoBufferConstructorOptions {
+	level: RulePlainConfiguration;
+	options?: NoBufferConstructorOptions;
+}
 export interface RuleWithNoBunModulesOptions {
 	level: RulePlainConfiguration;
 	options?: NoBunModulesOptions;
@@ -10545,6 +10629,10 @@ export interface RuleWithNoVueExcessivePropsOptions {
 	level: RulePlainConfiguration;
 	options?: NoVueExcessivePropsOptions;
 }
+export interface RuleWithNoVueExportInScriptSetupOptions {
+	level: RulePlainConfiguration;
+	options?: NoVueExportInScriptSetupOptions;
+}
 export interface RuleWithNoVueExposeAfterAwaitOptions {
 	level: RulePlainConfiguration;
 	options?: NoVueExposeAfterAwaitOptions;
@@ -10697,9 +10785,17 @@ export interface RuleWithNoYamlBooleanKeysOptions {
 	level: RulePlainConfiguration;
 	options?: NoYamlBooleanKeysOptions;
 }
+export interface RuleWithNoYamlEmptyMapKeysOptions {
+	level: RulePlainConfiguration;
+	options?: NoYamlEmptyMapKeysOptions;
+}
 export interface RuleWithNoYamlEmptyMapValuesOptions {
 	level: RulePlainConfiguration;
 	options?: NoYamlEmptyMapValuesOptions;
+}
+export interface RuleWithNoYamlEmptySequenceEntriesOptions {
+	level: RulePlainConfiguration;
+	options?: NoYamlEmptySequenceEntriesOptions;
 }
 export interface RuleWithNoZeroFractionsOptions {
 	/**
@@ -10756,6 +10852,10 @@ export interface RuleWithUseBlockStatementOverIifeOptions {
 	fix?: FixKind;
 	level: RulePlainConfiguration;
 	options?: UseBlockStatementOverIifeOptions;
+}
+export interface RuleWithUseCalledWithOptions {
+	level: RulePlainConfiguration;
+	options?: UseCalledWithOptions;
 }
 export interface RuleWithUseCapitalizedConstructorsOptions {
 	level: RulePlainConfiguration;
@@ -10860,6 +10960,22 @@ export interface RuleWithUseExpectToContainOptions {
 	fix?: FixKind;
 	level: RulePlainConfiguration;
 	options?: UseExpectToContainOptions;
+}
+export interface RuleWithUseExpectToHaveBeenCalledOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: UseExpectToHaveBeenCalledOptions;
+}
+export interface RuleWithUseExpectToHaveBeenCalledTimesOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: UseExpectToHaveBeenCalledTimesOptions;
 }
 export interface RuleWithUseExplicitReturnTypeOptions {
 	level: RulePlainConfiguration;
@@ -11045,6 +11161,14 @@ export interface RuleWithUseSingleTopLevelHeadingOptions {
 	level: RulePlainConfiguration;
 	options?: UseSingleTopLevelHeadingOptions;
 }
+export interface RuleWithUseSpyOnOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: UseSpyOnOptions;
+}
 export interface RuleWithUseStrictBooleanExpressionsOptions {
 	level: RulePlainConfiguration;
 	options?: UseStrictBooleanExpressionsOptions;
@@ -11137,6 +11261,10 @@ export interface RuleWithUseTopLevelHeadingOptions {
 	level: RulePlainConfiguration;
 	options?: UseTopLevelHeadingOptions;
 }
+export interface RuleWithUseTopLevelRequireOptions {
+	level: RulePlainConfiguration;
+	options?: UseTopLevelRequireOptions;
+}
 export interface RuleWithUseUnaryMinusOptions {
 	/**
 	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
@@ -11148,6 +11276,10 @@ export interface RuleWithUseUnaryMinusOptions {
 export interface RuleWithUseValidCharacterComparisonOptions {
 	level: RulePlainConfiguration;
 	options?: UseValidCharacterComparisonOptions;
+}
+export interface RuleWithUseValidNamespaceImportsOptions {
+	level: RulePlainConfiguration;
+	options?: UseValidNamespaceImportsOptions;
 }
 export interface RuleWithUseValidTestTitleOptions {
 	/**
@@ -13381,6 +13513,7 @@ export interface NoBaseToStringOptions {
 	ignoredTypeNames?: string[];
 }
 export type NoBooleanSortComparatorOptions = {};
+export type NoBufferConstructorOptions = {};
 export type NoBunModulesOptions = {};
 export type NoChainedComparisonOptions = {};
 export type NoConfusingArraySpliceOptions = {};
@@ -13812,6 +13945,7 @@ export interface NoVueExcessivePropsOptions {
 	 */
 	maxProps?: number;
 }
+export type NoVueExportInScriptSetupOptions = {};
 export type NoVueExposeAfterAwaitOptions = {};
 export type NoVueLifecycleAfterAwaitOptions = {};
 export interface NoVueLoneTemplateOptions {
@@ -13894,7 +14028,9 @@ export type NoVueVTextVHtmlOnComponentOptions = {};
 export type NoVueWatchAfterAwaitOptions = {};
 export type NoXorAsExponentiationOptions = {};
 export type NoYamlBooleanKeysOptions = {};
+export type NoYamlEmptyMapKeysOptions = {};
 export type NoYamlEmptyMapValuesOptions = {};
+export type NoYamlEmptySequenceEntriesOptions = {};
 export type NoZeroFractionsOptions = {};
 export type NoZeroLengthUnitOptions = {};
 export type UseAccessorPairsOptions = {};
@@ -13904,6 +14040,7 @@ export type UseAwaitThenableOptions = {};
 export type UseBetterDomTraversingOptions = {};
 export type UseBigintLiteralsOptions = {};
 export type UseBlockStatementOverIifeOptions = {};
+export type UseCalledWithOptions = {};
 export type UseCapitalizedConstructorsOptions = {};
 export interface UseCatchErrorNameOptions {
 	/**
@@ -14013,6 +14150,8 @@ export interface UseExhaustiveSwitchCasesOptions {
 	requireExplicitCase?: boolean;
 }
 export type UseExpectToContainOptions = {};
+export type UseExpectToHaveBeenCalledOptions = {};
+export type UseExpectToHaveBeenCalledTimesOptions = {};
 /**
  * Options for the `useExplicitReturnType` rule.
  */
@@ -14145,6 +14284,7 @@ export interface UseSingleTopLevelHeadingOptions {
 	 */
 	level?: number;
 }
+export type UseSpyOnOptions = {};
 export type UseStrictBooleanExpressionsOptions = {};
 export type UseStringStartsEndsWithOptions = {};
 export type UseSvelteEventDispatcherTypesOptions = {};
@@ -14178,8 +14318,10 @@ export type UseTailwindVariablesShorthandOptions = {};
 export type UseTanstackQueryInfiniteQueryPropertyOrderOptions = {};
 export type UseTanstackQueryStableQueryClientOptions = {};
 export type UseTopLevelHeadingOptions = {};
+export type UseTopLevelRequireOptions = {};
 export type UseUnaryMinusOptions = {};
 export type UseValidCharacterComparisonOptions = {};
+export type UseValidNamespaceImportsOptions = {};
 export interface UseValidTestTitleOptions {
 	/**
 	 * A list of words that are disallowed in test titles.
@@ -15859,6 +16001,7 @@ export type Category =
 	| "lint/nursery/noAwaitInPromiseMethods"
 	| "lint/nursery/noBaseToString"
 	| "lint/nursery/noBooleanSortComparator"
+	| "lint/nursery/noBufferConstructor"
 	| "lint/nursery/noBunModules"
 	| "lint/nursery/noChainedComparison"
 	| "lint/nursery/noColorInvalidHex"
@@ -15881,6 +16024,7 @@ export type Category =
 	| "lint/nursery/noDynamicRequire"
 	| "lint/nursery/noEagerArrayMethodsInLoops"
 	| "lint/nursery/noEmptyObjectKeys"
+	| "lint/nursery/noYamlEmptySequenceEntries"
 	| "lint/nursery/noErasingOperation"
 	| "lint/nursery/noExcessiveNestedBlocks"
 	| "lint/nursery/noExcessiveNestedCallbacks"
@@ -16035,6 +16179,7 @@ export type Category =
 	| "lint/nursery/noVueDeprecatedVIs"
 	| "lint/nursery/noVueDeprecatedVOnNativeModifier"
 	| "lint/nursery/noVueExcessiveProps"
+	| "lint/nursery/noVueExportInScriptSetup"
 	| "lint/nursery/noVueExposeAfterAwait"
 	| "lint/nursery/noVueImportCompilerMacros"
 	| "lint/nursery/noVueLifecycleAfterAwait"
@@ -16072,6 +16217,7 @@ export type Category =
 	| "lint/nursery/noVueWatchAfterAwait"
 	| "lint/nursery/noXorAsExponentiation"
 	| "lint/nursery/noYamlBooleanKeys"
+	| "lint/nursery/noYamlEmptyMapKeys"
 	| "lint/nursery/noYamlEmptyMapValues"
 	| "lint/nursery/noZeroFractions"
 	| "lint/nursery/noZeroLengthUnit"
@@ -16083,6 +16229,7 @@ export type Category =
 	| "lint/nursery/useBigintLiterals"
 	| "lint/nursery/useBiomeSuppressionComment"
 	| "lint/nursery/useBlockStatementOverIife"
+	| "lint/nursery/useCalledWith"
 	| "lint/nursery/useCapitalizedConstructors"
 	| "lint/nursery/useCatchErrorName"
 	| "lint/nursery/useConsistentBlockLang"
@@ -16100,6 +16247,8 @@ export type Category =
 	| "lint/nursery/useDisposables"
 	| "lint/nursery/useExhaustiveSwitchCases"
 	| "lint/nursery/useExpectToContain"
+	| "lint/nursery/useExpectToHaveBeenCalled"
+	| "lint/nursery/useExpectToHaveBeenCalledTimes"
 	| "lint/nursery/useExplicitFunctionReturnType"
 	| "lint/nursery/useExplicitReturnType"
 	| "lint/nursery/useExplicitType"
@@ -16143,6 +16292,7 @@ export type Category =
 	| "lint/nursery/useSetSize"
 	| "lint/nursery/useSimplifiedBooleanReturn"
 	| "lint/nursery/useSingleTopLevelHeading"
+	| "lint/nursery/useSpyOn"
 	| "lint/nursery/useStrictBooleanExpressions"
 	| "lint/nursery/useStringStartsEndsWith"
 	| "lint/nursery/useSvelteEventDispatcherTypes"
@@ -16159,6 +16309,7 @@ export type Category =
 	| "lint/nursery/useTanstackQueryInfiniteQueryPropertyOrder"
 	| "lint/nursery/useTanstackQueryStableQueryClient"
 	| "lint/nursery/useTopLevelHeading"
+	| "lint/nursery/useTopLevelRequire"
 	| "lint/nursery/useUnaryMinus"
 	| "lint/nursery/useUniqueArgumentNames"
 	| "lint/nursery/useUniqueFieldDefinitionNames"
@@ -16166,6 +16317,7 @@ export type Category =
 	| "lint/nursery/useUniqueInputFieldNames"
 	| "lint/nursery/useUniqueVariableNames"
 	| "lint/nursery/useValidCharacterComparison"
+	| "lint/nursery/useValidNamespaceImports"
 	| "lint/nursery/useValidTestTitle"
 	| "lint/nursery/useVueBaseImport"
 	| "lint/nursery/useVueBlockOrder"
