@@ -3138,6 +3138,11 @@ export interface Nursery {
 	 */
 	noInvalidThis?: NoInvalidThisConfiguration;
 	/**
+	 * Disallow Jasmine globals in Jest tests.
+	 * See https://biomejs.dev/linter/rules/no-jasmine-globals
+	 */
+	noJasmineGlobals?: NoJasmineGlobalsConfiguration;
+	/**
 	 * Disallow specific object properties.
 	 * See https://biomejs.dev/linter/rules/no-js-restricted-properties
 	 */
@@ -3338,6 +3343,11 @@ export interface Nursery {
 	 */
 	noReturnInFinally?: NoReturnInFinallyConfiguration;
 	/**
+	 * Disallow return statements in tests.
+	 * See https://biomejs.dev/linter/rules/no-return-in-test
+	 */
+	noReturnInTest?: NoReturnInTestConfiguration;
+	/**
 	 * Disallow comparing values to null in Sass @if conditions.
 	 * See https://biomejs.dev/linter/rules/no-scss-null-comparison
 	 */
@@ -3483,6 +3493,16 @@ export interface Nursery {
 	 */
 	noTanstackQueryVoidQueryFn?: NoTanstackQueryVoidQueryFnConfiguration;
 	/**
+	 * Disallow using test APIs as global variables.
+	 * See https://biomejs.dev/linter/rules/no-test-globals
+	 */
+	noTestGlobals?: NoTestGlobalsConfiguration;
+	/**
+	 * Disallow setup and teardown hooks in tests.
+	 * See https://biomejs.dev/linter/rules/no-test-hooks
+	 */
+	noTestHooks?: NoTestHooksConfiguration;
+	/**
 	 * Disallow this outside of classes.
 	 * See https://biomejs.dev/linter/rules/no-this-outside-of-class
 	 */
@@ -3593,6 +3613,11 @@ export interface Nursery {
 	 */
 	noUselessLengthCheck?: NoUselessLengthCheckConfiguration;
 	/**
+	 * Disallow nested ternary expressions that can be merged into one.
+	 * See https://biomejs.dev/linter/rules/no-useless-nested-ternary
+	 */
+	noUselessNestedTernary?: NoUselessNestedTernaryConfiguration;
+	/**
 	 * Disallow assigning a parameter property to itself in the constructor.
 	 * See https://biomejs.dev/linter/rules/no-useless-parameter-property-assignment
 	 */
@@ -3607,6 +3632,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/no-useless-recursion
 	 */
 	noUselessRecursion?: NoUselessRecursionConfiguration;
+	/**
+	 * Disallow creating a Set that a Set method such as union() doesn't need.
+	 * See https://biomejs.dev/linter/rules/no-useless-set-construction
+	 */
+	noUselessSetConstruction?: NoUselessSetConstructionConfiguration;
 	/**
 	 * Disallow splice() calls that have a simpler alternative.
 	 * See https://biomejs.dev/linter/rules/no-useless-splice
@@ -4083,6 +4113,16 @@ export interface Nursery {
 	 */
 	useExpectToHaveBeenCalledTimes?: UseExpectToHaveBeenCalledTimesConfiguration;
 	/**
+	 * Enforce using toHaveLength() to check the length of an array or string.
+	 * See https://biomejs.dev/linter/rules/use-expect-to-have-length
+	 */
+	useExpectToHaveLength?: UseExpectToHaveLengthConfiguration;
+	/**
+	 * Enforce using toStrictEqual() instead of toEqual() to compare values in tests.
+	 * See https://biomejs.dev/linter/rules/use-expect-to-strict-equal
+	 */
+	useExpectToStrictEqual?: UseExpectToStrictEqualConfiguration;
+	/**
 	 * Require explicit return types on functions and class methods.
 	 * See https://biomejs.dev/linter/rules/use-explicit-return-type
 	 */
@@ -4332,6 +4372,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/use-tanstack-query-stable-query-client
 	 */
 	useTanstackQueryStableQueryClient?: UseTanstackQueryStableQueryClientConfiguration;
+	/**
+	 * Require tests and hooks to be inside a describe block.
+	 * See https://biomejs.dev/linter/rules/use-top-level-describe
+	 */
+	useTopLevelDescribe?: UseTopLevelDescribeConfiguration;
 	/**
 	 * Require Markdown documents to start with a top-level heading.
 	 * See https://biomejs.dev/linter/rules/use-top-level-heading
@@ -6857,6 +6902,9 @@ export type NoInvalidRemoveEventListenerConfiguration =
 export type NoInvalidThisConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoInvalidThisOptions;
+export type NoJasmineGlobalsConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoJasmineGlobalsOptions;
 export type NoJsRestrictedPropertiesConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoJsRestrictedPropertiesOptions;
@@ -6977,6 +7025,9 @@ export type NoReturnArrayPushConfiguration =
 export type NoReturnInFinallyConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoReturnInFinallyOptions;
+export type NoReturnInTestConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoReturnInTestOptions;
 export type NoScssNullComparisonConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoScssNullComparisonOptions;
@@ -7064,6 +7115,12 @@ export type NoTanstackQueryRestDestructuringConfiguration =
 export type NoTanstackQueryVoidQueryFnConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoTanstackQueryVoidQueryFnOptions;
+export type NoTestGlobalsConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoTestGlobalsOptions;
+export type NoTestHooksConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoTestHooksOptions;
 export type NoThisOutsideOfClassConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoThisOutsideOfClassOptions;
@@ -7130,6 +7187,9 @@ export type NoUselessFallbackInSpreadConfiguration =
 export type NoUselessLengthCheckConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoUselessLengthCheckOptions;
+export type NoUselessNestedTernaryConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoUselessNestedTernaryOptions;
 export type NoUselessParameterPropertyAssignmentConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoUselessParameterPropertyAssignmentOptions;
@@ -7139,6 +7199,9 @@ export type NoUselessQualifierConfiguration =
 export type NoUselessRecursionConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoUselessRecursionOptions;
+export type NoUselessSetConstructionConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoUselessSetConstructionOptions;
 export type NoUselessSpliceConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoUselessSpliceOptions;
@@ -7424,6 +7487,12 @@ export type UseExpectToHaveBeenCalledConfiguration =
 export type UseExpectToHaveBeenCalledTimesConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseExpectToHaveBeenCalledTimesOptions;
+export type UseExpectToHaveLengthConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseExpectToHaveLengthOptions;
+export type UseExpectToStrictEqualConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseExpectToStrictEqualOptions;
 export type UseExplicitReturnTypeConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseExplicitReturnTypeOptions;
@@ -7574,6 +7643,9 @@ export type UseTanstackQueryInfiniteQueryPropertyOrderConfiguration =
 export type UseTanstackQueryStableQueryClientConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseTanstackQueryStableQueryClientOptions;
+export type UseTopLevelDescribeConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseTopLevelDescribeOptions;
 export type UseTopLevelHeadingConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseTopLevelHeadingOptions;
@@ -10001,6 +10073,14 @@ export interface RuleWithNoInvalidThisOptions {
 	level: RulePlainConfiguration;
 	options?: NoInvalidThisOptions;
 }
+export interface RuleWithNoJasmineGlobalsOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: NoJasmineGlobalsOptions;
+}
 export interface RuleWithNoJsRestrictedPropertiesOptions {
 	level: RulePlainConfiguration;
 	options?: NoJsRestrictedPropertiesOptions;
@@ -10213,6 +10293,10 @@ export interface RuleWithNoReturnInFinallyOptions {
 	level: RulePlainConfiguration;
 	options?: NoReturnInFinallyOptions;
 }
+export interface RuleWithNoReturnInTestOptions {
+	level: RulePlainConfiguration;
+	options?: NoReturnInTestOptions;
+}
 export interface RuleWithNoScssNullComparisonOptions {
 	level: RulePlainConfiguration;
 	options?: NoScssNullComparisonOptions;
@@ -10365,6 +10449,18 @@ export interface RuleWithNoTanstackQueryVoidQueryFnOptions {
 	level: RulePlainConfiguration;
 	options?: NoTanstackQueryVoidQueryFnOptions;
 }
+export interface RuleWithNoTestGlobalsOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: NoTestGlobalsOptions;
+}
+export interface RuleWithNoTestHooksOptions {
+	level: RulePlainConfiguration;
+	options?: NoTestHooksOptions;
+}
 export interface RuleWithNoThisOutsideOfClassOptions {
 	level: RulePlainConfiguration;
 	options?: NoThisOutsideOfClassOptions;
@@ -10477,6 +10573,14 @@ export interface RuleWithNoUselessLengthCheckOptions {
 	level: RulePlainConfiguration;
 	options?: NoUselessLengthCheckOptions;
 }
+export interface RuleWithNoUselessNestedTernaryOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: NoUselessNestedTernaryOptions;
+}
 export interface RuleWithNoUselessParameterPropertyAssignmentOptions {
 	level: RulePlainConfiguration;
 	options?: NoUselessParameterPropertyAssignmentOptions;
@@ -10492,6 +10596,14 @@ export interface RuleWithNoUselessQualifierOptions {
 export interface RuleWithNoUselessRecursionOptions {
 	level: RulePlainConfiguration;
 	options?: NoUselessRecursionOptions;
+}
+export interface RuleWithNoUselessSetConstructionOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: NoUselessSetConstructionOptions;
 }
 export interface RuleWithNoUselessSpliceOptions {
 	/**
@@ -10989,6 +11101,22 @@ export interface RuleWithUseExpectToHaveBeenCalledTimesOptions {
 	level: RulePlainConfiguration;
 	options?: UseExpectToHaveBeenCalledTimesOptions;
 }
+export interface RuleWithUseExpectToHaveLengthOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: UseExpectToHaveLengthOptions;
+}
+export interface RuleWithUseExpectToStrictEqualOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: UseExpectToStrictEqualOptions;
+}
 export interface RuleWithUseExplicitReturnTypeOptions {
 	level: RulePlainConfiguration;
 	options?: UseExplicitReturnTypeOptions;
@@ -11268,6 +11396,10 @@ export interface RuleWithUseTanstackQueryStableQueryClientOptions {
 	fix?: FixKind;
 	level: RulePlainConfiguration;
 	options?: UseTanstackQueryStableQueryClientOptions;
+}
+export interface RuleWithUseTopLevelDescribeOptions {
+	level: RulePlainConfiguration;
+	options?: UseTopLevelDescribeOptions;
 }
 export interface RuleWithUseTopLevelHeadingOptions {
 	level: RulePlainConfiguration;
@@ -13682,6 +13814,7 @@ export type NoInvalidFileInputAcceptOptions = {};
 export type NoInvalidPropertyInitValueOptions = {};
 export type NoInvalidRemoveEventListenerOptions = {};
 export type NoInvalidThisOptions = {};
+export type NoJasmineGlobalsOptions = {};
 export interface NoJsRestrictedPropertiesOptions {
 	/**
 	 * Restriction entries for object/property access.
@@ -13749,6 +13882,7 @@ export type NoRedundantTypeConstituentsOptions = {};
 export type NoRestrictedDependenciesOptions = {};
 export type NoReturnArrayPushOptions = {};
 export type NoReturnInFinallyOptions = {};
+export type NoReturnInTestOptions = {};
 export type NoScssNullComparisonOptions = {};
 export type NoSelfImportOptions = {};
 export type NoSelfNestedLayerOptions = {};
@@ -13854,6 +13988,8 @@ export interface NoTailwindRestyledComponentsOptions {
 }
 export type NoTanstackQueryRestDestructuringOptions = {};
 export type NoTanstackQueryVoidQueryFnOptions = {};
+export type NoTestGlobalsOptions = {};
+export type NoTestHooksOptions = {};
 export type NoThisOutsideOfClassOptions = {};
 export interface NoTripleSlashReferenceOptions {
 	/**
@@ -13896,9 +14032,11 @@ export type NoUselessCallOptions = {};
 export type NoUselessDateGetTimeOptions = {};
 export type NoUselessFallbackInSpreadOptions = {};
 export type NoUselessLengthCheckOptions = {};
+export type NoUselessNestedTernaryOptions = {};
 export type NoUselessParameterPropertyAssignmentOptions = {};
 export type NoUselessQualifierOptions = {};
 export type NoUselessRecursionOptions = {};
+export type NoUselessSetConstructionOptions = {};
 export type NoUselessSpliceOptions = {};
 export type NoUselessSpreadOptions = {};
 export type NoUselessTypeAssertionOptions = {};
@@ -14171,6 +14309,8 @@ export interface UseExhaustiveSwitchCasesOptions {
 export type UseExpectToContainOptions = {};
 export type UseExpectToHaveBeenCalledOptions = {};
 export type UseExpectToHaveBeenCalledTimesOptions = {};
+export type UseExpectToHaveLengthOptions = {};
+export type UseExpectToStrictEqualOptions = {};
 /**
  * Options for the `useExplicitReturnType` rule.
  */
@@ -14336,6 +14476,14 @@ export type UseTailwindStaticClassStringsOptions = {};
 export type UseTailwindVariablesShorthandOptions = {};
 export type UseTanstackQueryInfiniteQueryPropertyOrderOptions = {};
 export type UseTanstackQueryStableQueryClientOptions = {};
+export interface UseTopLevelDescribeOptions {
+	/**
+	 * The maximum number of `describe` blocks allowed at the top level of a file.
+	 *
+	 * When this option isn't set, any number of top-level `describe` blocks is allowed.
+	 */
+	maxTopLevelDescribes?: number;
+}
 export type UseTopLevelHeadingOptions = {};
 export type UseTopLevelRequireOptions = {};
 export type UseUnaryMinusOptions = {};
@@ -16043,6 +16191,7 @@ export type Category =
 	| "lint/nursery/noDynamicRequire"
 	| "lint/nursery/noEagerArrayMethodsInLoops"
 	| "lint/nursery/noEmptyObjectKeys"
+	| "lint/nursery/noTestHooks"
 	| "lint/nursery/noYamlEmptySequenceEntries"
 	| "lint/nursery/noErasingOperation"
 	| "lint/nursery/noExcessiveNestedBlocks"
@@ -16060,6 +16209,7 @@ export type Category =
 	| "lint/nursery/noInvalidRemoveEventListener"
 	| "lint/nursery/noInvalidThis"
 	| "lint/nursery/noIteratorProperty"
+	| "lint/nursery/noJasmineGlobals"
 	| "lint/nursery/noJsRestrictedProperties"
 	| "lint/nursery/noJsonUnsafeValues"
 	| "lint/nursery/noLateCurrentTargetAccess"
@@ -16114,6 +16264,7 @@ export type Category =
 	| "lint/nursery/noRestrictedDependencies"
 	| "lint/nursery/noReturnArrayPush"
 	| "lint/nursery/noReturnInFinally"
+	| "lint/nursery/noReturnInTest"
 	| "lint/nursery/noScssNullComparison"
 	| "lint/nursery/noSelfImport"
 	| "lint/nursery/noSelfNestedLayer"
@@ -16143,6 +16294,7 @@ export type Category =
 	| "lint/nursery/noTailwindRestyledComponents"
 	| "lint/nursery/noTanstackQueryRestDestructuring"
 	| "lint/nursery/noTanstackQueryVoidQueryFn"
+	| "lint/nursery/noTestGlobals"
 	| "lint/nursery/noThisOutsideOfClass"
 	| "lint/nursery/noTripleSlashReference"
 	| "lint/nursery/noUndeclaredClasses"
@@ -16167,9 +16319,11 @@ export type Category =
 	| "lint/nursery/noUselessDateGetTime"
 	| "lint/nursery/noUselessFallbackInSpread"
 	| "lint/nursery/noUselessLengthCheck"
+	| "lint/nursery/noUselessNestedTernary"
 	| "lint/nursery/noUselessParameterPropertyAssignment"
 	| "lint/nursery/noUselessQualifier"
 	| "lint/nursery/noUselessRecursion"
+	| "lint/nursery/noUselessSetConstruction"
 	| "lint/nursery/noUselessSplice"
 	| "lint/nursery/noUselessSpread"
 	| "lint/nursery/noUselessTypeAssertion"
@@ -16269,6 +16423,8 @@ export type Category =
 	| "lint/nursery/useExpectToContain"
 	| "lint/nursery/useExpectToHaveBeenCalled"
 	| "lint/nursery/useExpectToHaveBeenCalledTimes"
+	| "lint/nursery/useExpectToHaveLength"
+	| "lint/nursery/useExpectToStrictEqual"
 	| "lint/nursery/useExplicitFunctionReturnType"
 	| "lint/nursery/useExplicitReturnType"
 	| "lint/nursery/useExplicitType"
@@ -16328,6 +16484,7 @@ export type Category =
 	| "lint/nursery/useTailwindVariablesShorthand"
 	| "lint/nursery/useTanstackQueryInfiniteQueryPropertyOrder"
 	| "lint/nursery/useTanstackQueryStableQueryClient"
+	| "lint/nursery/useTopLevelDescribe"
 	| "lint/nursery/useTopLevelHeading"
 	| "lint/nursery/useTopLevelRequire"
 	| "lint/nursery/useUnaryMinus"

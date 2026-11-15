@@ -183,12 +183,18 @@ static TANSTACKQUERY_FILTERS: LazyLock<Vec<RuleFilter<'static>>> = LazyLock::new
 static TEST_FILTERS: LazyLock<Vec<RuleFilter<'static>>> = LazyLock::new(|| {
     vec![
         RuleFilter::Rule("complexity", "noExcessiveNestedTestSuites"),
+        RuleFilter::Rule("nursery", "noReturnInTest"),
+        RuleFilter::Rule("nursery", "noTestGlobals"),
+        RuleFilter::Rule("nursery", "noTestHooks"),
         RuleFilter::Rule("nursery", "useCalledWith"),
         RuleFilter::Rule("nursery", "useExpectToContain"),
         RuleFilter::Rule("nursery", "useExpectToHaveBeenCalled"),
         RuleFilter::Rule("nursery", "useExpectToHaveBeenCalledTimes"),
+        RuleFilter::Rule("nursery", "useExpectToHaveLength"),
+        RuleFilter::Rule("nursery", "useExpectToStrictEqual"),
         RuleFilter::Rule("nursery", "useLowercaseTestTitle"),
         RuleFilter::Rule("nursery", "useSpyOn"),
+        RuleFilter::Rule("nursery", "useTopLevelDescribe"),
         RuleFilter::Rule("nursery", "useValidTestTitle"),
         RuleFilter::Rule("style", "useConsistentTestIt"),
         RuleFilter::Rule("style", "useTestHooksInOrder"),

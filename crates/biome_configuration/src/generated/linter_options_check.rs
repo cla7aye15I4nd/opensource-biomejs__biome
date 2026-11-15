@@ -848,6 +848,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
     ));
     result.push((
         "nursery",
+        "noJasmineGlobals",
+        TypeId::of::<biome_rule_options::no_jasmine_globals::NoJasmineGlobalsOptions>(),
+    ));
+    result.push((
+        "nursery",
         "noJsRestrictedProperties",
         TypeId::of::<
             biome_rule_options::no_js_restricted_properties::NoJsRestrictedPropertiesOptions,
@@ -1379,6 +1384,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         TypeId::of::<biome_rule_options::no_return_in_finally::NoReturnInFinallyOptions>(),
     ));
     result.push((
+        "nursery",
+        "noReturnInTest",
+        TypeId::of::<biome_rule_options::no_return_in_test::NoReturnInTestOptions>(),
+    ));
+    result.push((
         "style",
         "noRootType",
         TypeId::of::<biome_rule_options::no_root_type::NoRootTypeOptions>(),
@@ -1623,6 +1633,16 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         "style",
         "noTernary",
         TypeId::of::<biome_rule_options::no_ternary::NoTernaryOptions>(),
+    ));
+    result.push((
+        "nursery",
+        "noTestGlobals",
+        TypeId::of::<biome_rule_options::no_test_globals::NoTestGlobalsOptions>(),
+    ));
+    result.push((
+        "nursery",
+        "noTestHooks",
+        TypeId::of::<biome_rule_options::no_test_hooks::NoTestHooksOptions>(),
     ));
     result.push((
         "suspicious",
@@ -1972,6 +1992,12 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         TypeId::of::<biome_rule_options::no_useless_length_check::NoUselessLengthCheckOptions>(),
     ));
     result.push(("complexity", "noUselessLoneBlockStatements", TypeId::of::<biome_rule_options::no_useless_lone_block_statements::NoUselessLoneBlockStatementsOptions>()));
+    result.push((
+        "nursery",
+        "noUselessNestedTernary",
+        TypeId::of::<biome_rule_options::no_useless_nested_ternary::NoUselessNestedTernaryOptions>(
+        ),
+    ));
     result.push(("nursery", "noUselessParameterPropertyAssignment", TypeId::of::<biome_rule_options::no_useless_parameter_property_assignment::NoUselessParameterPropertyAssignmentOptions>()));
     result.push((
         "nursery",
@@ -1998,6 +2024,13 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         "complexity",
         "noUselessReturn",
         TypeId::of::<biome_rule_options::no_useless_return::NoUselessReturnOptions>(),
+    ));
+    result.push((
+        "nursery",
+        "noUselessSetConstruction",
+        TypeId::of::<
+            biome_rule_options::no_useless_set_construction::NoUselessSetConstructionOptions,
+        >(),
     ));
     result.push((
         "nursery",
@@ -2734,6 +2767,17 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
     ));
     result.push(("nursery", "useExpectToHaveBeenCalledTimes", TypeId::of::<biome_rule_options::use_expect_to_have_been_called_times::UseExpectToHaveBeenCalledTimesOptions>()));
     result.push((
+        "nursery",
+        "useExpectToHaveLength",
+        TypeId::of::<biome_rule_options::use_expect_to_have_length::UseExpectToHaveLengthOptions>(),
+    ));
+    result.push((
+        "nursery",
+        "useExpectToStrictEqual",
+        TypeId::of::<biome_rule_options::use_expect_to_strict_equal::UseExpectToStrictEqualOptions>(
+        ),
+    ));
+    result.push((
         "style",
         "useExplicitLengthCheck",
         TypeId::of::<biome_rule_options::use_explicit_length_check::UseExplicitLengthCheckOptions>(
@@ -3406,6 +3450,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         "style",
         "useThrowOnlyError",
         TypeId::of::<biome_rule_options::use_throw_only_error::UseThrowOnlyErrorOptions>(),
+    ));
+    result.push((
+        "nursery",
+        "useTopLevelDescribe",
+        TypeId::of::<biome_rule_options::use_top_level_describe::UseTopLevelDescribeOptions>(),
     ));
     result.push((
         "nursery",
