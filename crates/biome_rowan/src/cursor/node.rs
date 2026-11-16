@@ -1,3 +1,4 @@
+use crate::cursor::node_rc::NodeRc;
 use crate::cursor::{NodeData, SyntaxElement, SyntaxToken, SyntaxTrivia};
 use crate::green::{Child, Children, GreenElementRef, Slot};
 use crate::{
@@ -10,26 +11,25 @@ use std::hash::{Hash, Hasher};
 use std::iter::FusedIterator;
 use std::ops;
 use std::ptr::NonNull;
-use std::rc::Rc;
 use std::{fmt, iter};
 
 use super::{GreenElement, NodeKind, WeakGreenElement};
 
 #[derive(Clone)]
 pub(crate) struct SyntaxNode {
-    pub(super) ptr: Rc<NodeData>,
+    pub(super) ptr: NodeRc,
 }
 
 impl SyntaxNode {
     pub(crate) fn new_root(green: GreenNode) -> Self {
         Self {
-            ptr: NodeData::new(
+            ptr: NodeRc::new(NodeData::new(
                 NodeKind::Root {
                     green: GreenElement::Node(green),
                 },
                 0,
                 0.into(),
-            ),
+            )),
         }
     }
 
@@ -40,14 +40,14 @@ impl SyntaxNode {
         offset: TextSize,
     ) -> Self {
         Self {
-            ptr: NodeData::new(
+            ptr: NodeRc::new(NodeData::new(
                 NodeKind::Child {
                     green: WeakGreenElement::new(GreenElementRef::Node(green)),
                     parent: parent.ptr,
                 },
                 slot,
                 offset,
-            ),
+            )),
         }
     }
 
@@ -57,7 +57,7 @@ impl SyntaxNode {
 
     #[inline]
     pub(super) fn data(&self) -> &NodeData {
-        self.ptr.as_ref()
+        &self.ptr
     }
 
     #[inline]
@@ -624,6 +624,31 @@ impl SyntaxNode {
                     })
                 }),
             ),
+        }
+    }
+
+    #[must_use = "syntax elements are immutable, the result of update methods must be propagated to have any effect"]
+    pub(crate) fn splice_many_slots<E, R>(self, edits: E) -> Self
+    where
+        E: IntoIterator<Item = (usize, R)>,
+        R: IntoIterator<Item = Option<SyntaxElement>>,
+    {
+        let green =
+            self.green()
+                .splice_many_slots(edits.into_iter().map(|(index, replacement)| {
+                    (
+                        index,
+                        replacement.into_iter().map(|element| {
+                            element.map(|child| match child.detach() {
+                                NodeOrToken::Node(it) => it.ptr.into_green(),
+                                NodeOrToken::Token(it) => it.into_green(),
+                            })
+                        }),
+                    )
+                }));
+
+        Self {
+            ptr: self.ptr.into_root_with_green(GreenElement::Node(green)),
         }
     }
 

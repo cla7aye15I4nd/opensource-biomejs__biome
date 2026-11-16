@@ -1,13 +1,11 @@
 use super::builder::MAX_DEPTH;
 use biome_js_control_flow::AnyJsControlFlowRoot;
-use biome_js_semantic::{JsDeclarationKind, SemanticModel};
 use biome_js_syntax::{
-    AnyJsBinding, AnyJsStatement, AnyTsReturnType, JsAssignmentExpression, JsAssignmentOperator,
-    JsConditionalExpression, JsDoWhileStatement, JsForStatement, JsIdentifierBinding,
-    JsIfStatement, JsLogicalExpression, JsReferenceIdentifier, JsSyntaxKind, JsSyntaxNode,
-    JsWhileStatement, TsDeclareFunctionDeclaration, unescape_js_identifier,
+    AnyJsBinding, AnyTsReturnType, JsConditionalExpression, JsDoWhileStatement, JsForStatement,
+    JsIdentifierBinding, JsIfStatement, JsLogicalExpression, JsSyntaxKind, JsSyntaxNode,
+    JsWhileStatement, TsDeclareFunctionDeclaration,
 };
-use biome_rowan::{AstNode, SyntaxKind, TextRange, declare_node_union};
+use biome_rowan::{AstNode, SyntaxKind, declare_node_union};
 use std::ops::Range;
 
 /// Limits the syntax nodes, including nested roots, of a root that gets flow.
@@ -30,18 +28,17 @@ declare_node_union! {
 /// [`Self::enter`] and [`Self::leave`]. A root is selected when it directly
 /// contains a condition, or a standalone call while the module declares an
 /// assertion, outside its nested roots, has fewer than
-/// [`MAX_ROOT_NODES`] syntax nodes, uses only syntax the flow builder supports,
-/// and neither it nor a nested root may read the global `eval` or the implicit
-/// `arguments` object: direct `eval` and mapped `arguments` can write any
-/// enclosing variable.
+/// [`MAX_ROOT_NODES`] syntax nodes, and uses only syntax the flow builder
+/// supports.
 ///
-/// The builder supports truthiness tests in `if`, `while`, `do` and ordinary
-/// `for` statements, and expression-level `&&`, `||`, `??` and `?:`. A root is
-/// not selected when its own syntax, outside nested roots, contains exception
-/// handlers, `switch`, `for-in`/`for-of`, `with`, classes, destructuring,
-/// logical assignments, bogus syntax, or nesting deeper than [`MAX_DEPTH`].
+/// The builder treats statements it does not model, such as `switch` or
+/// `try`, as opaque regions, so they do not reject a root. A root is not
+/// selected when its own syntax, outside nested roots, contains a `with`
+/// statement, bogus syntax, or nesting deeper than [`MAX_DEPTH`]. A `with`
+/// statement changes what the names inside it refer to, and TypeScript types
+/// its contents as `any`.
 ///
-/// Types never run, so the scanner ignores conditions and references inside
+/// Types never run, so the scanner ignores conditions and bindings inside
 /// them, skips type aliases and interfaces entirely, and skips everything but
 /// the name of a function overload declaration. Roots nested in types, such as
 /// a function in a computed property key, are therefore never selected.
@@ -69,9 +66,6 @@ pub(crate) struct FlowRootScanner {
     deferred: Vec<SelectedRoot>,
     /// The bindings of the selected and deferred roots.
     kept_bindings: Vec<JsIdentifierBinding>,
-    /// Whether some root of the module may read the global `eval` or the
-    /// implicit `arguments` object.
-    has_dynamic_scope: bool,
     /// Whether the module contains an `asserts` return annotation.
     has_assertion_signature: bool,
 }
@@ -84,7 +78,7 @@ pub(super) struct SelectedRoot {
 }
 
 impl FlowRootScanner {
-    pub(crate) fn enter(&mut self, node: &JsSyntaxNode, model: &SemanticModel) {
+    pub(crate) fn enter(&mut self, node: &JsSyntaxNode) {
         self.visited += 1;
         self.depth += 1;
         let kind = node.kind();
@@ -102,18 +96,8 @@ impl FlowRootScanner {
                 first_node: self.visited - 1,
                 first_binding: self.bindings.len(),
                 depth: self.depth,
-                range: node.text_range_with_trivia(),
-                // Arrow functions read the `arguments` object of the function
-                // that encloses them.
-                has_arguments: !matches!(
-                    kind,
-                    JsSyntaxKind::JS_ARROW_FUNCTION_EXPRESSION
-                        | JsSyntaxKind::JS_MODULE
-                        | JsSyntaxKind::JS_SCRIPT
-                ),
                 has_condition: false,
                 has_call_statement: false,
-                has_dynamic_scope: false,
                 is_unsupported: false,
             });
         }
@@ -136,7 +120,7 @@ impl FlowRootScanner {
             self.declaration = Some(self.depth);
             return;
         }
-        root.check_node(node, kind);
+        root.check_node(kind);
         if self.type_region.is_some() {
             return;
         }
@@ -159,12 +143,6 @@ impl FlowRootScanner {
             self.bindings.push(binding);
         } else if kind == JsSyntaxKind::JS_EXPRESSION_STATEMENT {
             self.statement_expression = Some(self.depth + 1);
-        } else if !root.has_dynamic_scope
-            && let Some(reference) = JsReferenceIdentifier::cast_ref(node)
-            && self.is_dynamic_scope_reference(&reference, model)
-            && let Some(root) = self.open.last_mut()
-        {
-            root.has_dynamic_scope = true;
         }
     }
 
@@ -186,12 +164,7 @@ impl FlowRootScanner {
         let Some(root) = self.open.pop() else {
             return;
         };
-        if root.has_dynamic_scope {
-            match self.open.last_mut() {
-                Some(parent) => parent.has_dynamic_scope = true,
-                None => self.has_dynamic_scope = true,
-            }
-        } else if (root.has_condition || root.has_call_statement)
+        if (root.has_condition || root.has_call_statement)
             && !root.is_unsupported
             && self.visited - root.first_node < MAX_ROOT_NODES
             && let Some(node) = AnyJsControlFlowRoot::cast_ref(node)
@@ -231,46 +204,6 @@ impl FlowRootScanner {
     pub(super) fn bindings(&self, root: &SelectedRoot) -> &[JsIdentifierBinding] {
         &self.kept_bindings[root.bindings.clone()]
     }
-
-    /// Returns whether some root of the module, at any depth, may read the
-    /// global `eval` or the implicit `arguments` object.
-    pub(super) fn has_dynamic_scope(&self) -> bool {
-        self.has_dynamic_scope
-    }
-
-    /// Returns whether `reference` may read the global `eval` or the implicit
-    /// `arguments` object, including escaped spellings.
-    ///
-    /// Every reference to `eval` counts: calling a variable named `eval` that
-    /// holds the global function is still a direct `eval`. A reference to
-    /// `arguments` is an ordinary read only when the semantic model resolves it
-    /// to a parameter, catch parameter, `let`, or `const` declared inside the
-    /// innermost root that has its own `arguments` object, or anywhere when no
-    /// enclosing root has one, such as at the top level of a script. A `var`
-    /// starts out as that object, and the object shadows the function's own
-    /// name and every declaration outside that root.
-    fn is_dynamic_scope_reference(
-        &self,
-        reference: &JsReferenceIdentifier,
-        model: &SemanticModel,
-    ) -> bool {
-        let Ok(token) = reference.value_token() else {
-            return false;
-        };
-        match unescape_js_identifier(token.text_trimmed()).as_ref() {
-            "eval" => true,
-            "arguments" => !model.binding(reference).is_some_and(|binding| {
-                binding.declaration_kind() == JsDeclarationKind::Value
-                    && self
-                        .open
-                        .iter()
-                        .rev()
-                        .find(|root| root.has_arguments)
-                        .is_none_or(|owner| owner.range.contains_range(binding.range()))
-            }),
-            _ => false,
-        }
-    }
 }
 
 struct OpenRoot {
@@ -279,14 +212,10 @@ struct OpenRoot {
     /// declares.
     first_binding: usize,
     depth: usize,
-    range: TextRange,
-    /// Whether the root has its own `arguments` object when it runs.
-    has_arguments: bool,
     has_condition: bool,
     /// Whether the root's own code has an expression statement that is a call,
     /// possibly in parentheses.
     has_call_statement: bool,
-    has_dynamic_scope: bool,
     is_unsupported: bool,
 }
 
@@ -299,53 +228,18 @@ impl OpenRoot {
         }
     }
 
-    /// Marks the root unsupported when the flow builder does not support
-    /// `node`, a node of its own syntax, regardless of its descendants.
-    fn check_node(&mut self, node: &JsSyntaxNode, kind: JsSyntaxKind) {
+    /// Marks the root unsupported when the flow builder does not support a
+    /// node of `kind` in its own syntax, regardless of the node's descendants.
+    fn check_node(&mut self, kind: JsSyntaxKind) {
         if self.is_unsupported {
             return;
         }
         self.is_unsupported = kind.is_bogus()
             || kind.is_metavariable()
-            || (AnyJsStatement::can_cast(kind)
-                && !matches!(
-                    kind,
-                    JsSyntaxKind::JS_BLOCK_STATEMENT
-                        | JsSyntaxKind::JS_BREAK_STATEMENT
-                        | JsSyntaxKind::JS_CONTINUE_STATEMENT
-                        | JsSyntaxKind::JS_DEBUGGER_STATEMENT
-                        | JsSyntaxKind::JS_DO_WHILE_STATEMENT
-                        | JsSyntaxKind::JS_EMPTY_STATEMENT
-                        | JsSyntaxKind::JS_EXPRESSION_STATEMENT
-                        | JsSyntaxKind::JS_FOR_STATEMENT
-                        | JsSyntaxKind::JS_FUNCTION_DECLARATION
-                        | JsSyntaxKind::JS_IF_STATEMENT
-                        | JsSyntaxKind::JS_LABELED_STATEMENT
-                        | JsSyntaxKind::JS_RETURN_STATEMENT
-                        | JsSyntaxKind::JS_THROW_STATEMENT
-                        | JsSyntaxKind::JS_VARIABLE_STATEMENT
-                        | JsSyntaxKind::JS_WHILE_STATEMENT
-                ))
+            || kind == JsSyntaxKind::JS_WITH_STATEMENT
             // A property signature is only checked as a root, never as part of
             // another root's syntax, because it is itself an execution root.
-            || matches!(
-                kind,
-                JsSyntaxKind::JS_CLASS_EXPRESSION
-                    | JsSyntaxKind::JS_CLASS_EXPORT_DEFAULT_DECLARATION
-                    | JsSyntaxKind::JS_ARRAY_BINDING_PATTERN
-                    | JsSyntaxKind::JS_OBJECT_BINDING_PATTERN
-                    | JsSyntaxKind::JS_ARRAY_ASSIGNMENT_PATTERN
-                    | JsSyntaxKind::JS_OBJECT_ASSIGNMENT_PATTERN
-                    | JsSyntaxKind::TS_PROPERTY_SIGNATURE_TYPE_MEMBER
-            )
-            || JsAssignmentExpression::cast_ref(node).is_some_and(|assignment| {
-                matches!(
-                    assignment.operator(),
-                    Ok(JsAssignmentOperator::LogicalAndAssign
-                        | JsAssignmentOperator::LogicalOrAssign
-                        | JsAssignmentOperator::NullishCoalescingAssign)
-                )
-            });
+            || kind == JsSyntaxKind::TS_PROPERTY_SIGNATURE_TYPE_MEMBER;
     }
 }
 
@@ -353,7 +247,6 @@ impl OpenRoot {
 mod tests {
     use super::*;
     use biome_js_parser::{JsParserOptions, parse};
-    use biome_js_semantic::{SemanticModelOptions, semantic_model};
     use biome_js_syntax::AnyJsRoot;
     use biome_languages::JsFileSource;
     use biome_rowan::WalkEvent;
@@ -375,11 +268,10 @@ mod tests {
     }
 
     fn scan(root: &AnyJsRoot) -> FlowRootScanner {
-        let model = semantic_model(root, SemanticModelOptions::default());
         let mut scanner = FlowRootScanner::default();
         for event in root.syntax().preorder() {
             match event {
-                WalkEvent::Enter(node) => scanner.enter(&node, &model),
+                WalkEvent::Enter(node) => scanner.enter(&node),
                 WalkEvent::Leave(node) => scanner.leave(&node),
             }
         }
@@ -440,24 +332,78 @@ mod tests {
     }
 
     #[test]
-    fn unsupported_syntax_rejects_only_its_own_root() {
+    fn statements_the_builder_does_not_model_keep_their_root() {
         for body in [
-            "try { read(x); } catch {}",
-            "try { read(x); } finally {}",
-            "switch (x) { case 1: read(x); }",
+            "try { read(x); } catch (error) { read(error); }",
+            "try { read(x); } finally { read(x); }",
+            "switch (x) { case 1: read(x); break; default: read(x); }",
             "for (const key in x) read(key);",
             "for (const item of x) read(item);",
-            "x &&= read(x);",
-            "x ||= read(x);",
-            "x ??= read(x);",
-            "const { value = read(x) } = x;",
-            "class C { field = read(x); }",
+            "class C extends Base { field = read(x); }",
+            "enum E { A = 1 }",
         ] {
             let source = format!("function f(x) {{ if (x) read(x); {body} }}");
-            assert!(selected(&source).is_empty(), "{body}");
-            let source =
-                format!("function f(x) {{ if (x) read(x); const g = () => {{ {body} }}; }}");
-            assert_eq!(selected(&source).len(), 1, "{body}");
+            assert_eq!(selected(&source), [source.as_str()], "{body}");
+        }
+        for body in [
+            "declare const d: string | null;",
+            "declare module \"m\" { export const v: string; }",
+            "declare global { var v: string; }",
+            "import y = require(\"y\");",
+            "export import z = N.z;",
+            "namespace N { export const z = 1; }",
+            "export class C {}",
+            "export enum E { A }",
+            "export declare class D {}",
+            "export = x;",
+        ] {
+            let source = format!("declare const x: string | null; if (x) read(x); {body}");
+            assert_eq!(selected(&source), [source.as_str()], "{body}");
+        }
+    }
+
+    #[test]
+    fn with_statements_reject_only_their_own_root() {
+        let selected_in_script = |source: &str| {
+            let parsed = parse(
+                source,
+                JsFileSource::js_script(),
+                JsParserOptions::default(),
+            );
+            assert!(!parsed.has_errors(), "{source}");
+            selected_in(&parsed.tree())
+        };
+        assert!(
+            selected_in_script("function f(x) { if (x) read(x); with (x) read(x); }").is_empty()
+        );
+        assert_eq!(
+            selected_in_script(
+                "function f(x) { if (x) read(x); const g = () => { with (x) read(x); }; }"
+            ),
+            ["function f(x) { if (x) read(x); const g = () => { with (x) read(x); }; }"]
+        );
+    }
+
+    #[test]
+    fn patterns_class_expressions_and_logical_assignments_keep_their_root() {
+        for body in [
+            "const { value = read(x), ...rest } = x;",
+            "const [first, ...others] = x;",
+            "({ value: y } = x);",
+            "[y = read(x)] = x;",
+            "y &&= read(x);",
+            "y ||= read(x);",
+            "y ??= read(x);",
+            "const C = class extends Base { field = read(x); static { read(x); } m() {} };",
+        ] {
+            let source = format!("function f(x) {{ if (x) read(x); {body} }}");
+            assert_eq!(selected(&source), [source.as_str()], "{body}");
+        }
+        for source in [
+            "function f({ value }, [first]) { if (value) read(first); }",
+            "if (x) read(x); export default class { field = read(x); }",
+        ] {
+            assert_eq!(selected(source), [source], "{source}");
         }
     }
 
@@ -468,86 +414,13 @@ mod tests {
     }
 
     #[test]
-    fn references_in_types_are_not_dynamic_scope() {
-        for source in [
-            "function f(x: typeof eval, y: arguments) { if (x) read(y); }",
-            "function f(x): asserts arguments { if (x) read(x); }",
-        ] {
-            assert_eq!(selected(source).len(), 1, "{source}");
-        }
-        let source = "function f(x) { if (x) read(arguments); }";
-        assert!(selected(source).is_empty());
-    }
-
-    /// Returns how many roots are selected in the sloppy-mode script `source`,
-    /// the only kind of source that can declare `eval` or `arguments`.
-    fn selected_in_script(source: &str) -> usize {
-        let parsed = parse(
-            source,
-            JsFileSource::js_script(),
-            JsParserOptions::default(),
-        );
-        assert!(!parsed.has_errors(), "{source}");
-        selected_in(&parsed.tree()).len()
-    }
-
-    #[test]
-    fn every_eval_reference_disables_flow() {
-        for source in [
-            "function f(x) { if (x) eval(x); }",
-            "function f(x) { var eval = read; if (x) eval(x); }",
-            "var eval; function f(x) { if (x) eval(x); }",
-        ] {
-            assert_eq!(selected_in_script(source), 0, "{source}");
-        }
-    }
-
-    #[test]
-    fn arguments_declared_in_its_own_function_is_an_ordinary_read() {
-        for (source, expected) in [
-            ("function f(x, arguments) { if (x) read(arguments); }", 1),
-            (
-                "function f(x) { let arguments = x; if (x) read(arguments); }",
-                1,
-            ),
-            (
-                "function f(x, arguments) { const g = () => arguments; if (x) read(x); }",
-                1,
-            ),
-            (
-                "function f(x) { const arguments = x; if (x) read(arguments); }",
-                1,
-            ),
-            (
-                "function f(x) { try {} catch (arguments) { const g = () => { if (x) read(arguments); }; } }",
-                1,
-            ),
-            ("let arguments = 0; if (x) read(arguments);", 1),
-            (
-                "function f(x) { var arguments; if (x) read(arguments); }",
-                0,
-            ),
-            ("function arguments(x) { if (x) read(arguments); }", 0),
-            ("(function arguments(x) { if (x) read(arguments); });", 0),
-            (
-                "function f(x) { function arguments() {} if (x) read(arguments); }",
-                0,
-            ),
-            (
-                "function outer(arguments) { function f(x) { if (x) read(arguments); } }",
-                0,
-            ),
-            ("function f(x) { if (x) \\u0061rguments; }", 0),
-        ] {
-            assert_eq!(selected_in_script(source), expected, "{source}");
-        }
-    }
-
-    #[test]
-    fn namespaces_are_roots_without_flow() {
+    fn namespaces_are_roots_of_their_own() {
         const SOURCE: &str =
             "let x: string | null = null; if (x) read(x); namespace N { if (x) read(x); }";
-        assert_eq!(selected(SOURCE), [SOURCE]);
+        assert_eq!(
+            selected(SOURCE),
+            ["namespace N { if (x) read(x); }", SOURCE]
+        );
     }
 
     #[test]

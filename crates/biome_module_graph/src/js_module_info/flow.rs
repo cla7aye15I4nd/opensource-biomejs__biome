@@ -24,7 +24,10 @@ pub(crate) use scanner::FlowRootScanner;
 
 use biome_js_control_flow::AnyJsControlFlowRoot;
 use biome_js_semantic::{JsDeclarationKind, SemanticModel};
-use biome_js_syntax::JsIdentifierBinding;
+use biome_js_syntax::{
+    JsArrayBindingPatternElement, JsIdentifierBinding, JsObjectBindingPatternProperty,
+    JsObjectBindingPatternShorthandProperty, JsSyntaxKind,
+};
 use biome_js_type_info::{RawTypeData, TypeReference, is_raw_narrowing_invariant};
 use biome_rowan::{AstNode, AstPtr, TextRange};
 use builder::{BuiltRoot, build_root};
@@ -129,7 +132,7 @@ impl ModuleFlow {
             raw_types,
             raw_binding_types,
             relevance_budget,
-            functions: GuardFunctions::new(raw_types, raw_binding_types, roots.has_dynamic_scope()),
+            functions: GuardFunctions::new(raw_types, raw_binding_types),
         };
         for selected in roots.selected() {
             collector.add_root(&mut flow, &selected.root, roots.bindings(selected));
@@ -250,6 +253,11 @@ impl RootCollector<'_> {
     /// narrow its reads.
     fn eligible_range(&self, binding: &JsIdentifierBinding) -> Option<TextRange> {
         let range = binding.range();
+        // The declared type of a destructured variable ignores defaults, so it
+        // can lack the type of a default that supplies the value.
+        if has_destructuring_default(binding) {
+            return None;
+        }
         let binding = self.model.as_binding_by_range(range)?;
         // The semantic index matches the start offset, not the entire range.
         // A `var` initializer is not a semantic write and may follow an
@@ -319,6 +327,38 @@ impl RootCollector<'_> {
     }
 }
 
+/// Returns whether a destructuring default can supply the value of `binding`,
+/// either its own default, as in `{ a = 1 }`, or the default of an enclosing
+/// pattern, as in `{ pair: [a] = [1] }`.
+fn has_destructuring_default(binding: &JsIdentifierBinding) -> bool {
+    binding
+        .syntax()
+        .ancestors()
+        .skip(1)
+        .take_while(|node| {
+            matches!(
+                node.kind(),
+                JsSyntaxKind::JS_ARRAY_BINDING_PATTERN
+                    | JsSyntaxKind::JS_ARRAY_BINDING_PATTERN_ELEMENT
+                    | JsSyntaxKind::JS_ARRAY_BINDING_PATTERN_ELEMENT_LIST
+                    | JsSyntaxKind::JS_ARRAY_BINDING_PATTERN_REST_ELEMENT
+                    | JsSyntaxKind::JS_OBJECT_BINDING_PATTERN
+                    | JsSyntaxKind::JS_OBJECT_BINDING_PATTERN_PROPERTY
+                    | JsSyntaxKind::JS_OBJECT_BINDING_PATTERN_PROPERTY_LIST
+                    | JsSyntaxKind::JS_OBJECT_BINDING_PATTERN_REST
+                    | JsSyntaxKind::JS_OBJECT_BINDING_PATTERN_SHORTHAND_PROPERTY
+            )
+        })
+        .any(|node| {
+            JsArrayBindingPatternElement::cast_ref(&node)
+                .is_some_and(|element| element.init().is_some())
+                || JsObjectBindingPatternProperty::cast_ref(&node)
+                    .is_some_and(|property| property.init().is_some())
+                || JsObjectBindingPatternShorthandProperty::cast_ref(&node)
+                    .is_some_and(|property| property.init().is_some())
+        })
+}
+
 #[cfg(test)]
 mod tests {
     use crate::js_module_info::{JsModuleInfo, JsModuleVisitor, TypeInferenceMode};
@@ -358,15 +398,14 @@ mod tests {
     }
 
     #[test]
-    fn dynamic_scope_references_in_nested_functions_disable_enclosing_flow() {
-        for (closure, expected) in [("value", true), ("eval('value = null')", false)] {
+    fn eval_and_arguments_in_nested_functions_keep_enclosing_flow() {
+        for closure in ["eval('value = null')", "arguments"] {
             let source = format!(
                 "function f(value: string | null) {{ const g = () => {closure}; if (value !== null) {{ /*read*/value; }} }}"
             );
             let info = module(&source);
-            assert_eq!(
+            assert!(
                 info.flow.is_candidate(marked(&source, "read", "value")),
-                expected,
                 "{closure}"
             );
         }
@@ -392,9 +431,8 @@ mod tests {
 
     #[test]
     fn declared_function_names_belong_to_the_enclosing_root() {
-        // A `declare` statement makes its root unsupported, unlike an exported
-        // declaration or a bodiless signature.
         for source in [
+            "declare function g(): void; if (!g) { /*read*/g; }",
             "export declare function g(): void; if (!g) { /*read*/g; }",
             "function g(): void; if (!g) { /*read*/g; }",
         ] {
@@ -427,7 +465,7 @@ mod tests {
         let mut roots = super::FlowRootScanner::default();
         for event in info.semantic_model.root().syntax().preorder() {
             match event {
-                WalkEvent::Enter(node) => roots.enter(&node, &info.semantic_model),
+                WalkEvent::Enter(node) => roots.enter(&node),
                 WalkEvent::Leave(node) => roots.leave(&node),
             }
         }

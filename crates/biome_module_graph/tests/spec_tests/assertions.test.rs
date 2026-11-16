@@ -461,18 +461,24 @@ fn assertions_respect_binding_identity_writes_and_existing_subject_restrictions(
         assert_variants(&db, ty, expected, marker);
     }
     assert_no_whole_module_inference(&db, &db.take_salsa_events());
-    // A direct `eval` can write any variable in scope, including the guard.
-    const DYNAMIC: &str = r#"
+}
+
+// TypeScript 6.0.3 (`tsc --strict`) narrows the read to `string`, although
+// the direct `eval` sets `value` to `null`. Biome deliberately copies this
+// unsound narrowing; `NARROWING.md` lists it among the deliberate choices.
+#[test]
+fn assertions_narrow_despite_a_following_eval() {
+    const SOURCE: &str = r#"
         declare function assertString(input: unknown): asserts input is string;
-        function dynamic(value: string | number) {
+        function dynamic(value: string | null) {
             assertString(value);
-            \u0065val('value = 0');
+            eval("value = null");
             /*eval*/value;
         }
     "#;
-    let (db, module) = assertion_db(DYNAMIC);
-    let ty = normalized_type_at(&db, module, DYNAMIC, "eval", "value");
-    assert_variants(&db, ty, &[String, Number], "eval");
+    let (db, module) = assertion_db(SOURCE);
+    let ty = normalized_type_at(&db, module, SOURCE, "eval", "value");
+    assert_variants(&db, ty, &[InferredTypeData::String], "eval");
 }
 
 #[test]
@@ -547,6 +553,68 @@ fn unsupported_assertion_signatures_and_never_returns_do_not_add_facts() {
         assert_variants(&db, ty, &[String, Null], declaration);
         assert_no_whole_module_inference(&db, &db.take_salsa_events());
     }
+}
+
+// Every expected type is the type that TypeScript 6.0.3 (`tsc --strict`) gives
+// the same read. TypeScript reports TS2775 for an assertion call whose callee
+// is a variable without a type annotation and does not narrow the argument,
+// whether the variable holds an arrow or a function expression. A type
+// predicate through a variable initialized the same way narrows.
+#[test]
+fn assertion_functions_must_be_declared_with_function() {
+    use InferredTypeData::{Null, Number, String};
+    const SOURCE: &str = r#"
+        const assertArrow = (input: unknown): asserts input => { if (!input) throw new Error(); };
+        const assertArrowString = (input: unknown): asserts input is string => { if (typeof input !== 'string') throw new Error(); };
+        const assertExpression = function (input: unknown): asserts input { if (!input) throw new Error(); };
+        const assertExpressionString = function (input: unknown): asserts input is string { if (typeof input !== 'string') throw new Error(); };
+        const isStringArrow = (input: unknown): input is string => typeof input === 'string';
+        function assertDeclaration(input: unknown): asserts input { if (!input) throw new Error(); }
+        function assertDeclarationString(input: unknown): asserts input is string { if (typeof input !== 'string') throw new Error(); }
+        function arrow(value: string | null) {
+            assertArrow(value);
+            /*arrow*/value;
+        }
+        function arrowString(value: string | number) {
+            assertArrowString(value);
+            /*arrowString*/value;
+        }
+        function expression(value: string | null) {
+            assertExpression(value);
+            /*expression*/value;
+        }
+        function expressionString(value: string | number) {
+            assertExpressionString(value);
+            /*expressionString*/value;
+        }
+        function predicateArrow(value: string | number) {
+            if (isStringArrow(value)) {
+                /*predicateArrow*/value;
+            }
+        }
+        function declaration(value: string | null) {
+            assertDeclaration(value);
+            /*declaration*/value;
+        }
+        function declarationString(value: string | number) {
+            assertDeclarationString(value);
+            /*declarationString*/value;
+        }
+    "#;
+    let (db, module) = assertion_db(SOURCE);
+    for (marker, expected) in [
+        ("arrow", &[String, Null][..]),
+        ("arrowString", &[String, Number]),
+        ("expression", &[String, Null]),
+        ("expressionString", &[String, Number]),
+        ("predicateArrow", &[String]),
+        ("declaration", &[String]),
+        ("declarationString", &[String]),
+    ] {
+        let ty = normalized_type_at(&db, module, SOURCE, marker, "value");
+        assert_variants(&db, ty, expected, marker);
+    }
+    assert_no_whole_module_inference(&db, &db.take_salsa_events());
 }
 
 #[test]
