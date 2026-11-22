@@ -36,6 +36,9 @@ impl<S: Source> Document<S> {
     /// Boundary groups, see [crate::builders::boundary_group], stop the expansion the same way:
     /// their content never expands them or the groups around them.
     ///
+    /// Groups set to [GroupMode::Propagated] by an earlier call are recomputed, so calling
+    /// this again after [Self::replace_embedded] reflects the replaced content.
+    ///
     /// [`BestFitting`]: FormatElement::BestFitting
     pub(crate) fn propagate_expand(&mut self) {
         #[derive(Debug)]
@@ -62,12 +65,15 @@ impl<S: Source> Document<S> {
             let outer_len = enclosing.len();
             for element in elements {
                 let element_expands = match element {
-                    FormatElement::Tag(Tag::StartGroup(group)) if group.is_boundary() => {
-                        enclosing.push(Enclosing::BoundaryGroup);
-                        false
-                    }
                     FormatElement::Tag(Tag::StartGroup(group)) => {
-                        enclosing.push(Enclosing::Group(group));
+                        // Only content visited after this point can expand the group,
+                        // so a mode propagated by an earlier call is recomputed here.
+                        group.reset_propagated_expand();
+                        enclosing.push(if group.is_boundary() {
+                            Enclosing::BoundaryGroup
+                        } else {
+                            Enclosing::Group(group)
+                        });
                         false
                     }
                     FormatElement::Tag(Tag::EndGroup) => match enclosing.pop() {
@@ -938,6 +944,7 @@ impl<S: Source> FormatElements<S> for [FormatElement<S>] {
 mod tests {
     use biome_js_syntax::JsSyntaxKind;
     use biome_js_syntax::JsSyntaxToken;
+    use biome_rowan::TextRange;
 
     use crate::prelude::document::IrFormatOptions;
     use crate::prelude::tag::GroupMode;
@@ -969,6 +976,37 @@ mod tests {
         document.propagate_expand();
 
         assert_eq!(group.mode(), GroupMode::Flat);
+    }
+
+    #[test]
+    fn recomputes_propagated_expansion_after_replacing_embedded_content() {
+        use crate::format_element::tag::Tag::*;
+
+        let mut document = Document::from(vec![
+            FormatElement::Tag(StartGroup(tag::Group::new())),
+            FormatElement::Tag(StartEmbedded(TextRange::default())),
+            FormatElement::Interned(Interned::new(vec![FormatElement::Line(LineMode::Hard)])),
+            FormatElement::Tag(EndEmbedded),
+            FormatElement::Tag(EndGroup),
+        ]);
+
+        document.propagate_expand();
+        assert!(matches!(
+            &document.as_elements()[0],
+            FormatElement::Tag(StartGroup(group)) if group.mode() == GroupMode::Propagated
+        ));
+
+        document.replace_embedded(&mut |_| {
+            Some(Document::from(vec![FormatElement::Token {
+                text: "content",
+            }]))
+        });
+        document.propagate_expand();
+
+        assert!(matches!(
+            &document.as_elements()[0],
+            FormatElement::Tag(StartGroup(group)) if group.mode() == GroupMode::Flat
+        ));
     }
 
     #[test]
@@ -1014,6 +1052,50 @@ mod tests {
         assert_eq!(
             &std::format!("{document}"),
             "[<interned 0> [boundary_group([hard_line_break])], group([<ref interned *0>])]"
+        );
+    }
+
+    #[test]
+    fn preserved_text_expands_enclosing_groups_only_with_a_line_break() {
+        use crate::format_element::tag::Tag::*;
+
+        fn modes_of_groups_around(text: &str) -> Vec<GroupMode> {
+            let mut document = Document::from(vec![
+                FormatElement::Tag(StartGroup(tag::Group::new())),
+                FormatElement::Tag(StartGroup(tag::Group::new())),
+                FormatElement::Text {
+                    text: text.into(),
+                    text_width: TextWidth::from_text_preserving_line_endings(
+                        text,
+                        IrFormatOptions.indent_width(),
+                    ),
+                },
+                FormatElement::Tag(EndGroup),
+                FormatElement::Tag(EndGroup),
+            ]);
+
+            document.propagate_expand();
+
+            document
+                .as_elements()
+                .iter()
+                .filter_map(|element| match element {
+                    FormatElement::Tag(StartGroup(group)) => Some(group.mode()),
+                    _ => None,
+                })
+                .collect()
+        }
+
+        for text in ["a\r\nb", "a\nb", "a\rb"] {
+            assert_eq!(
+                modes_of_groups_around(text),
+                [GroupMode::Propagated, GroupMode::Propagated],
+                "{text:?}",
+            );
+        }
+        assert_eq!(
+            modes_of_groups_around("a"),
+            [GroupMode::Flat, GroupMode::Flat],
         );
     }
 
