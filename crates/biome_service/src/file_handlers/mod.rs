@@ -88,7 +88,8 @@ use biome_json_analyze::METADATA as json_metadata;
 use biome_json_syntax::JsonLanguage;
 #[cfg(feature = "lang_js")]
 use biome_languages::javascript::{
-    JsEmbeddingKind, JsFileSource, Language, LanguageVariant, SvelteEmbeddingKind, SvelteFileKind,
+    JsEmbeddingKind, JsFileSource, Language, LanguageVariant, MdxEmbeddingKind,
+    SvelteEmbeddingKind, SvelteFileKind,
 };
 use biome_languages::{DocumentFileSource, LanguageDb};
 #[cfg(feature = "module_graph")]
@@ -186,6 +187,7 @@ fn is_js_program(source: JsFileSource) -> bool {
         JsEmbeddingKind::Svelte { embedding_kind, .. } => {
             matches!(embedding_kind, SvelteEmbeddingKind::Source)
         }
+        JsEmbeddingKind::Mdx { kind } => matches!(kind, MdxEmbeddingKind::Esm),
         JsEmbeddingKind::None => true,
     }
 }
@@ -435,9 +437,15 @@ impl<'a> SnippetsIterator<'a> {
         Self::Workspace(snippets.into_iter())
     }
 
-    /// Excludes host-owned template comments from guest analysis, and every
+    /// Excludes host-owned template comments, such as Astro template comments
+    /// and comment-only MDX expressions, and MDX JavaScript that spans lines
+    /// inside a block quote from guest analysis, and every
     /// snippet of a Markdown file whose `markdown.analyzeEmbeds` is disabled. The unfiltered iterator remains available for formatting and
     /// host suppression extraction.
+    ///
+    /// The JavaScript of MDX constructs is analyzed regardless of
+    /// `markdown.analyzeEmbeds`: MDX compiles it into the document's module, so
+    /// its mistakes break the document, unlike the examples in code blocks.
     pub(crate) fn for_analysis(
         self,
         host: &'a ParsedOrigin,
@@ -453,11 +461,17 @@ impl<'a> SnippetsIterator<'a> {
         self.filter(move |snippet| {
             let _ = (host, source, snippet, db);
             #[cfg(feature = "md_embeds")]
-            if skips_markdown_snippets {
+            if skips_markdown_snippets && !is_mdx_snippet(snippet, db) {
                 return false;
             }
             #[cfg(feature = "html_embeds")]
             if html::is_astro_template_comment(host, source, snippet, db) {
+                return false;
+            }
+            #[cfg(feature = "lang_mdx")]
+            if md::is_mdx_comment_snippet(snippet, db)
+                || md::is_quoted_multiline_mdx_snippet(host, snippet, db)
+            {
                 return false;
             }
             true
@@ -466,18 +480,34 @@ impl<'a> SnippetsIterator<'a> {
 
     /// Excludes the snippets whose syntax errors don't stop formatting the
     /// containing file: the formatter of a Markdown file keeps such snippets as
-    /// written.
+    /// written. The JavaScript of an MDX construct is part of the document's
+    /// syntax, so its syntax errors stop formatting like the document's own.
     pub(crate) fn blocking_formatting(
         self,
         source: DocumentFileSource,
+        db: &'a WorkspaceDb,
     ) -> impl Iterator<Item = ParsedSnippetOrigin> + 'a {
-        let _ = source;
+        let _ = (source, db);
         #[cfg(feature = "lang_md")]
         let blocks = source.to_markdown_file_source().is_none();
         #[cfg(not(feature = "lang_md"))]
         let blocks = true;
-        self.filter(move |_| blocks)
+        self.filter(move |snippet| blocks || is_mdx_snippet(snippet, db))
     }
+}
+
+/// Returns whether `snippet` holds the JavaScript of an MDX construct.
+#[cfg(feature = "lang_mdx")]
+pub(crate) fn is_mdx_snippet(snippet: &ParsedSnippetOrigin, db: &WorkspaceDb) -> bool {
+    snippet
+        .file_source(db)
+        .and_then(|source| source.to_js_file_source())
+        .is_some_and(|source| source.as_embedding_kind().is_mdx())
+}
+
+#[cfg(not(feature = "lang_mdx"))]
+pub(crate) fn is_mdx_snippet(_snippet: &ParsedSnippetOrigin, _db: &WorkspaceDb) -> bool {
+    false
 }
 
 impl Iterator for SnippetsIterator<'_> {
@@ -1513,7 +1543,7 @@ impl Features {
                     file_kind: SvelteFileKind::Component,
                     ..
                 } => self.js.capabilities(),
-                JsEmbeddingKind::None => self.js.capabilities(),
+                JsEmbeddingKind::Mdx { .. } | JsEmbeddingKind::None => self.js.capabilities(),
             },
             DocumentFileSource::Json(_) => self.json.capabilities(),
             #[cfg(feature = "lang_css")]
