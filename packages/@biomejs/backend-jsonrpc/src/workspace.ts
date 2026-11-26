@@ -3015,6 +3015,11 @@ export interface Nursery {
 	 */
 	noBooleanSortComparator?: NoBooleanSortComparatorConfiguration;
 	/**
+	 * Disallow break statements inside nested loops and inside switch statements in loops.
+	 * See https://biomejs.dev/linter/rules/no-break-in-nested-loop
+	 */
+	noBreakInNestedLoop?: NoBreakInNestedLoopConfiguration;
+	/**
 	 * Disallow the deprecated Buffer() constructor in Node.js.
 	 * See https://biomejs.dev/linter/rules/no-buffer-constructor
 	 */
@@ -3049,6 +3054,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/no-constant-comparisons
 	 */
 	noConstantComparisons?: NoConstantComparisonsConfiguration;
+	/**
+	 * Disallow scheduling Convex cron jobs at the start of the hour.
+	 * See https://biomejs.dev/linter/rules/no-convex-top-of-hour-crons
+	 */
+	noConvexTopOfHourCrons?: NoConvexTopOfHourCronsConfiguration;
 	/**
 	 * Disallow names that start or end with an underscore.
 	 * See https://biomejs.dev/linter/rules/no-dangling-underscore
@@ -3310,6 +3320,11 @@ export interface Nursery {
 	 */
 	noOctal?: NoOctalConfiguration;
 	/**
+	 * Disallow using variables, this, and super from outside an isolated function.
+	 * See https://biomejs.dev/linter/rules/no-outer-scope-in-isolated-functions
+	 */
+	noOuterScopeInIsolatedFunctions?: NoOuterScopeInIsolatedFunctionsConfiguration;
+	/**
 	 * Disallow building file paths and URLs by joining strings to __dirname, __filename, or import.meta values.
 	 * See https://biomejs.dev/linter/rules/no-path-concat
 	 */
@@ -3374,6 +3389,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/no-return-in-test
 	 */
 	noReturnInTest?: NoReturnInTestConfiguration;
+	/**
+	 * Disallow the deprecated Sass functions that read one channel of a color.
+	 * See https://biomejs.dev/linter/rules/no-scss-deprecated-color-functions
+	 */
+	noScssDeprecatedColorFunctions?: NoScssDeprecatedColorFunctionsConfiguration;
 	/**
 	 * Disallow comparing values to null in Sass @if conditions.
 	 * See https://biomejs.dev/linter/rules/no-scss-null-comparison
@@ -3519,6 +3539,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/no-tanstack-query-rest-destructuring
 	 */
 	noTanstackQueryRestDestructuring?: NoTanstackQueryRestDestructuringConfiguration;
+	/**
+	 * Disallow using the result of a TanStack Query hook as a React hook dependency.
+	 * See https://biomejs.dev/linter/rules/no-tanstack-query-unstable-deps
+	 */
+	noTanstackQueryUnstableDeps?: NoTanstackQueryUnstableDepsConfiguration;
 	/**
 	 * Disallow TanStack Query functions that don't return any data.
 	 * See https://biomejs.dev/linter/rules/no-tanstack-query-void-query-fn
@@ -3724,6 +3749,16 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/no-vue-computed-properties-in-data
 	 */
 	noVueComputedPropertiesInData?: NoVueComputedPropertiesInDataConfiguration;
+	/**
+	 * Disallow calling a Vue computed property whose value is not a function.
+	 * See https://biomejs.dev/linter/rules/no-vue-computed-property-call
+	 */
+	noVueComputedPropertyCall?: NoVueComputedPropertyCallConfiguration;
+	/**
+	 * Disallow content outside of the top-level blocks in Vue components.
+	 * See https://biomejs.dev/linter/rules/no-vue-content-outside-block
+	 */
+	noVueContentOutsideBlock?: NoVueContentOutsideBlockConfiguration;
 	/**
 	 * Disallow default values in Vue's defineModel().
 	 * See https://biomejs.dev/linter/rules/no-vue-define-model-default
@@ -4115,6 +4150,11 @@ export interface Nursery {
 	 */
 	useConsistentBooleanProps?: UseConsistentBooleanPropsConfiguration;
 	/**
+	 * Enforce comparing with -1 when checking whether indexOf(), lastIndexOf(), findIndex(), or findLastIndex() found an element.
+	 * See https://biomejs.dev/linter/rules/use-consistent-existence-index-check
+	 */
+	useConsistentExistenceIndexCheck?: UseConsistentExistenceIndexCheckConfiguration;
+	/**
 	 * Enforce a consistent notation for font weights.
 	 * See https://biomejs.dev/linter/rules/use-consistent-font-weight-notation
 	 */
@@ -4469,6 +4509,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/use-tanstack-query-mutation-property-order
 	 */
 	useTanstackQueryMutationPropertyOrder?: UseTanstackQueryMutationPropertyOrderConfiguration;
+	/**
+	 * Require TanStack Query options to be created with queryOptions().
+	 * See https://biomejs.dev/linter/rules/use-tanstack-query-query-options
+	 */
+	useTanstackQueryQueryOptions?: UseTanstackQueryQueryOptionsConfiguration;
 	/**
 	 * Require the TanStack Query QueryClient to be created once, not on every render.
 	 * See https://biomejs.dev/linter/rules/use-tanstack-query-stable-query-client
@@ -6929,6 +6974,9 @@ export type NoBaseToStringConfiguration =
 export type NoBooleanSortComparatorConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoBooleanSortComparatorOptions;
+export type NoBreakInNestedLoopConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoBreakInNestedLoopOptions;
 export type NoBufferConstructorConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoBufferConstructorOptions;
@@ -6950,6 +6998,9 @@ export type NoConsoleSpacesConfiguration =
 export type NoConstantComparisonsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoConstantComparisonsOptions;
+export type NoConvexTopOfHourCronsConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoConvexTopOfHourCronsOptions;
 export type NoDanglingUnderscoreConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoDanglingUnderscoreOptions;
@@ -7106,6 +7157,9 @@ export type NoObsoleteTagsConfiguration =
 export type NoOctalConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoOctalOptions;
+export type NoOuterScopeInIsolatedFunctionsConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoOuterScopeInIsolatedFunctionsOptions;
 export type NoPathConcatConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoPathConcatOptions;
@@ -7145,6 +7199,9 @@ export type NoReturnInFinallyConfiguration =
 export type NoReturnInTestConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoReturnInTestOptions;
+export type NoScssDeprecatedColorFunctionsConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoScssDeprecatedColorFunctionsOptions;
 export type NoScssNullComparisonConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoScssNullComparisonOptions;
@@ -7232,6 +7289,9 @@ export type NoTailwindRestyledComponentsConfiguration =
 export type NoTanstackQueryRestDestructuringConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoTanstackQueryRestDestructuringOptions;
+export type NoTanstackQueryUnstableDepsConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoTanstackQueryUnstableDepsOptions;
 export type NoTanstackQueryVoidQueryFnConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoTanstackQueryVoidQueryFnOptions;
@@ -7355,6 +7415,12 @@ export type NoVueChildContentConfiguration =
 export type NoVueComputedPropertiesInDataConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoVueComputedPropertiesInDataOptions;
+export type NoVueComputedPropertyCallConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoVueComputedPropertyCallOptions;
+export type NoVueContentOutsideBlockConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoVueContentOutsideBlockOptions;
 export type NoVueDefineModelDefaultConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoVueDefineModelDefaultOptions;
@@ -7589,6 +7655,9 @@ export type UseConsistentBooleanNameConfiguration =
 export type UseConsistentBooleanPropsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseConsistentBooleanPropsOptions;
+export type UseConsistentExistenceIndexCheckConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseConsistentExistenceIndexCheckOptions;
 export type UseConsistentFontWeightNotationConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseConsistentFontWeightNotationOptions;
@@ -7802,6 +7871,9 @@ export type UseTanstackQueryInfiniteQueryPropertyOrderConfiguration =
 export type UseTanstackQueryMutationPropertyOrderConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseTanstackQueryMutationPropertyOrderOptions;
+export type UseTanstackQueryQueryOptionsConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseTanstackQueryQueryOptionsOptions;
 export type UseTanstackQueryStableQueryClientConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseTanstackQueryStableQueryClientOptions;
@@ -10111,6 +10183,10 @@ export interface RuleWithNoBooleanSortComparatorOptions {
 	level: RulePlainConfiguration;
 	options?: NoBooleanSortComparatorOptions;
 }
+export interface RuleWithNoBreakInNestedLoopOptions {
+	level: RulePlainConfiguration;
+	options?: NoBreakInNestedLoopOptions;
+}
 export interface RuleWithNoBufferConstructorOptions {
 	level: RulePlainConfiguration;
 	options?: NoBufferConstructorOptions;
@@ -10146,6 +10222,10 @@ export interface RuleWithNoConsoleSpacesOptions {
 export interface RuleWithNoConstantComparisonsOptions {
 	level: RulePlainConfiguration;
 	options?: NoConstantComparisonsOptions;
+}
+export interface RuleWithNoConvexTopOfHourCronsOptions {
+	level: RulePlainConfiguration;
+	options?: NoConvexTopOfHourCronsOptions;
 }
 export interface RuleWithNoDanglingUnderscoreOptions {
 	level: RulePlainConfiguration;
@@ -10427,6 +10507,10 @@ export interface RuleWithNoOctalOptions {
 	level: RulePlainConfiguration;
 	options?: NoOctalOptions;
 }
+export interface RuleWithNoOuterScopeInIsolatedFunctionsOptions {
+	level: RulePlainConfiguration;
+	options?: NoOuterScopeInIsolatedFunctionsOptions;
+}
 export interface RuleWithNoPathConcatOptions {
 	level: RulePlainConfiguration;
 	options?: NoPathConcatOptions;
@@ -10490,6 +10574,10 @@ export interface RuleWithNoReturnInFinallyOptions {
 export interface RuleWithNoReturnInTestOptions {
 	level: RulePlainConfiguration;
 	options?: NoReturnInTestOptions;
+}
+export interface RuleWithNoScssDeprecatedColorFunctionsOptions {
+	level: RulePlainConfiguration;
+	options?: NoScssDeprecatedColorFunctionsOptions;
 }
 export interface RuleWithNoScssNullComparisonOptions {
 	level: RulePlainConfiguration;
@@ -10642,6 +10730,10 @@ export interface RuleWithNoTailwindRestyledComponentsOptions {
 export interface RuleWithNoTanstackQueryRestDestructuringOptions {
 	level: RulePlainConfiguration;
 	options?: NoTanstackQueryRestDestructuringOptions;
+}
+export interface RuleWithNoTanstackQueryUnstableDepsOptions {
+	level: RulePlainConfiguration;
+	options?: NoTanstackQueryUnstableDepsOptions;
 }
 export interface RuleWithNoTanstackQueryVoidQueryFnOptions {
 	level: RulePlainConfiguration;
@@ -10870,6 +10962,18 @@ export interface RuleWithNoVueChildContentOptions {
 export interface RuleWithNoVueComputedPropertiesInDataOptions {
 	level: RulePlainConfiguration;
 	options?: NoVueComputedPropertiesInDataOptions;
+}
+export interface RuleWithNoVueComputedPropertyCallOptions {
+	level: RulePlainConfiguration;
+	options?: NoVueComputedPropertyCallOptions;
+}
+export interface RuleWithNoVueContentOutsideBlockOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: NoVueContentOutsideBlockOptions;
 }
 export interface RuleWithNoVueDefineModelDefaultOptions {
 	level: RulePlainConfiguration;
@@ -11250,6 +11354,14 @@ export interface RuleWithUseConsistentBooleanPropsOptions {
 	fix?: FixKind;
 	level: RulePlainConfiguration;
 	options?: UseConsistentBooleanPropsOptions;
+}
+export interface RuleWithUseConsistentExistenceIndexCheckOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: UseConsistentExistenceIndexCheckOptions;
 }
 export interface RuleWithUseConsistentFontWeightNotationOptions {
 	/**
@@ -11682,6 +11794,10 @@ export interface RuleWithUseTanstackQueryMutationPropertyOrderOptions {
 	fix?: FixKind;
 	level: RulePlainConfiguration;
 	options?: UseTanstackQueryMutationPropertyOrderOptions;
+}
+export interface RuleWithUseTanstackQueryQueryOptionsOptions {
+	level: RulePlainConfiguration;
+	options?: UseTanstackQueryQueryOptionsOptions;
 }
 export interface RuleWithUseTanstackQueryStableQueryClientOptions {
 	/**
@@ -13953,6 +14069,13 @@ export interface NoBaseToStringOptions {
 	ignoredTypeNames?: string[];
 }
 export type NoBooleanSortComparatorOptions = {};
+export interface NoBreakInNestedLoopOptions {
+	/**
+	 * Also report `continue` statements without a label inside nested loops and inside
+	 * `switch` statements in loops (default: false).
+	 */
+	checkContinue?: boolean;
+}
 export type NoBufferConstructorOptions = {};
 export type NoBunModulesOptions = {};
 export type NoCanvasToImageOptions = {};
@@ -13960,6 +14083,7 @@ export type NoChainedComparisonOptions = {};
 export type NoConfusingArraySpliceOptions = {};
 export type NoConsoleSpacesOptions = {};
 export type NoConstantComparisonsOptions = {};
+export type NoConvexTopOfHourCronsOptions = {};
 export type NoDanglingUnderscoreOptions = {};
 export type NoDisabledAttributeOptions = {};
 export type NoDoubleComparisonOptions = {};
@@ -14169,6 +14293,7 @@ export type NoObjectLiteralComparisonOptions = {};
 export type NoObsoleteAttributesOptions = {};
 export type NoObsoleteTagsOptions = {};
 export type NoOctalOptions = {};
+export type NoOuterScopeInIsolatedFunctionsOptions = {};
 export type NoPathConcatOptions = {};
 export type NoPlaywrightNthMethodsOptions = {};
 export type NoPlaywrightUnsafeReferencesOptions = {};
@@ -14182,6 +14307,7 @@ export type NoRestrictedDependenciesOptions = {};
 export type NoReturnArrayPushOptions = {};
 export type NoReturnInFinallyOptions = {};
 export type NoReturnInTestOptions = {};
+export type NoScssDeprecatedColorFunctionsOptions = {};
 export type NoScssNullComparisonOptions = {};
 export type NoSelfImportOptions = {};
 export type NoSelfNestedLayerOptions = {};
@@ -14287,6 +14413,7 @@ export interface NoTailwindRestyledComponentsOptions {
 	allow?: TailwindComponentAllowance[];
 }
 export type NoTanstackQueryRestDestructuringOptions = {};
+export type NoTanstackQueryUnstableDepsOptions = {};
 export type NoTanstackQueryVoidQueryFnOptions = {};
 export type NoTestGlobalsOptions = {};
 export type NoTestHooksOptions = {};
@@ -14361,6 +14488,8 @@ export interface NoVueChildContentOptions {
 	additionalDirectives?: string[];
 }
 export type NoVueComputedPropertiesInDataOptions = {};
+export type NoVueComputedPropertyCallOptions = {};
+export type NoVueContentOutsideBlockOptions = {};
 export type NoVueDefineModelDefaultOptions = {};
 export type NoVueDeprecatedConfigKeyCodesOptions = {};
 export type NoVueDeprecatedDeleteSetOptions = {};
@@ -14550,6 +14679,7 @@ export interface UseConsistentBooleanPropsOptions {
 	 */
 	mode?: BooleanPropMode;
 }
+export type UseConsistentExistenceIndexCheckOptions = {};
 export interface UseConsistentFontWeightNotationOptions {
 	/**
 	 * Whether to allow the relative keywords `bolder` and `lighter` when `notation` is `"numeric"`.
@@ -14816,6 +14946,7 @@ export interface UseTanstackQueryExhaustiveDependenciesOptions {
 }
 export type UseTanstackQueryInfiniteQueryPropertyOrderOptions = {};
 export type UseTanstackQueryMutationPropertyOrderOptions = {};
+export type UseTanstackQueryQueryOptionsOptions = {};
 export type UseTanstackQueryStableQueryClientOptions = {};
 export interface UseTopLevelDescribeOptions {
 	/**
@@ -16513,6 +16644,7 @@ export type Category =
 	| "lint/nursery/noAwaitInPromiseMethods"
 	| "lint/nursery/noBaseToString"
 	| "lint/nursery/noBooleanSortComparator"
+	| "lint/nursery/noBreakInNestedLoop"
 	| "lint/nursery/noBufferConstructor"
 	| "lint/nursery/noBunModules"
 	| "lint/nursery/noCanvasToImage"
@@ -16523,6 +16655,7 @@ export type Category =
 	| "lint/nursery/noConfusingArraySplice"
 	| "lint/nursery/noConsoleSpaces"
 	| "lint/nursery/noConstantComparisons"
+	| "lint/nursery/noConvexTopOfHourCrons"
 	| "lint/nursery/noDanglingUnderscore"
 	| "lint/nursery/noDisabledAttribute"
 	| "lint/nursery/noDoubleComparison"
@@ -16585,6 +16718,7 @@ export type Category =
 	| "lint/nursery/noObsoleteAttributes"
 	| "lint/nursery/noObsoleteTags"
 	| "lint/nursery/noOctal"
+	| "lint/nursery/noOuterScopeInIsolatedFunctions"
 	| "lint/nursery/noPathConcat"
 	| "lint/nursery/noPlaywrightElementHandle"
 	| "lint/nursery/noPlaywrightEval"
@@ -16611,6 +16745,7 @@ export type Category =
 	| "lint/nursery/noReturnArrayPush"
 	| "lint/nursery/noReturnInFinally"
 	| "lint/nursery/noReturnInTest"
+	| "lint/nursery/noScssDeprecatedColorFunctions"
 	| "lint/nursery/noScssNullComparison"
 	| "lint/nursery/noSelfImport"
 	| "lint/nursery/noSelfNestedLayer"
@@ -16640,6 +16775,7 @@ export type Category =
 	| "lint/nursery/noTailwindRestrictedClasses"
 	| "lint/nursery/noTailwindRestyledComponents"
 	| "lint/nursery/noTanstackQueryRestDestructuring"
+	| "lint/nursery/noTanstackQueryUnstableDeps"
 	| "lint/nursery/noTanstackQueryVoidQueryFn"
 	| "lint/nursery/noTestGlobals"
 	| "lint/nursery/noTestHooks"
@@ -16683,8 +16819,10 @@ export type Category =
 	| "lint/nursery/noVueBooleanDefault"
 	| "lint/nursery/noVueChildContent"
 	| "lint/nursery/noVueComputedPropertiesInData"
+	| "lint/nursery/noVueContentOutsideBlock"
 	| "lint/nursery/noVueDefineModelDefault"
 	| "lint/nursery/noVueDeprecatedConfigKeyCodes"
+	| "lint/nursery/noVueComputedPropertyCall"
 	| "lint/nursery/noVueDeprecatedDeleteSet"
 	| "lint/nursery/noVueDeprecatedDestroyedLifecycle"
 	| "lint/nursery/noVueDeprecatedEventsApi"
@@ -16765,6 +16903,7 @@ export type Category =
 	| "lint/nursery/useConsistentBlockLang"
 	| "lint/nursery/useConsistentBooleanName"
 	| "lint/nursery/useConsistentBooleanProps"
+	| "lint/nursery/useConsistentExistenceIndexCheck"
 	| "lint/nursery/useConsistentFontWeightNotation"
 	| "lint/nursery/useConsistentFunctionStyle"
 	| "lint/nursery/useConsistentHeadingLevel"
@@ -16846,6 +16985,7 @@ export type Category =
 	| "lint/nursery/useTanstackQueryExhaustiveDependencies"
 	| "lint/nursery/useTanstackQueryInfiniteQueryPropertyOrder"
 	| "lint/nursery/useTanstackQueryMutationPropertyOrder"
+	| "lint/nursery/useTanstackQueryQueryOptions"
 	| "lint/nursery/useTanstackQueryStableQueryClient"
 	| "lint/nursery/useTopLevelDescribe"
 	| "lint/nursery/useTopLevelHeading"

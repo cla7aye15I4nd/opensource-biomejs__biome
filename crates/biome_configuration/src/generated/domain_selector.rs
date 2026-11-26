@@ -17,6 +17,8 @@ static BIOMEPLUGIN_FILTERS: LazyLock<Vec<RuleFilter<'static>>> = LazyLock::new(|
         RuleFilter::Rule("nursery", "useBiomeTopLevelTypes"),
     ]
 });
+static CONVEX_FILTERS: LazyLock<Vec<RuleFilter<'static>>> =
+    LazyLock::new(|| vec![RuleFilter::Rule("nursery", "noConvexTopOfHourCrons")]);
 static DRIZZLE_FILTERS: LazyLock<Vec<RuleFilter<'static>>> = LazyLock::new(|| {
     vec![
         RuleFilter::Rule("nursery", "noDrizzleDbObjectInsideTransaction"),
@@ -184,10 +186,12 @@ static TAILWIND_FILTERS: LazyLock<Vec<RuleFilter<'static>>> = LazyLock::new(|| {
 static TANSTACKQUERY_FILTERS: LazyLock<Vec<RuleFilter<'static>>> = LazyLock::new(|| {
     vec![
         RuleFilter::Rule("nursery", "noTanstackQueryRestDestructuring"),
+        RuleFilter::Rule("nursery", "noTanstackQueryUnstableDeps"),
         RuleFilter::Rule("nursery", "noTanstackQueryVoidQueryFn"),
         RuleFilter::Rule("nursery", "useTanstackQueryExhaustiveDependencies"),
         RuleFilter::Rule("nursery", "useTanstackQueryInfiniteQueryPropertyOrder"),
         RuleFilter::Rule("nursery", "useTanstackQueryMutationPropertyOrder"),
+        RuleFilter::Rule("nursery", "useTanstackQueryQueryOptions"),
         RuleFilter::Rule("nursery", "useTanstackQueryStableQueryClient"),
     ]
 });
@@ -282,6 +286,8 @@ static VUE_FILTERS: LazyLock<Vec<RuleFilter<'static>>> = LazyLock::new(|| {
         RuleFilter::Rule("nursery", "noVueBooleanDefault"),
         RuleFilter::Rule("nursery", "noVueChildContent"),
         RuleFilter::Rule("nursery", "noVueComputedPropertiesInData"),
+        RuleFilter::Rule("nursery", "noVueComputedPropertyCall"),
+        RuleFilter::Rule("nursery", "noVueContentOutsideBlock"),
         RuleFilter::Rule("nursery", "noVueDefineModelDefault"),
         RuleFilter::Rule("nursery", "noVueDeprecatedConfigKeyCodes"),
         RuleFilter::Rule("nursery", "noVueDeprecatedDeleteSet"),
@@ -403,6 +409,7 @@ impl DomainSelector {
         match self.0 {
             "astro" => ASTRO_FILTERS.clone(),
             "biomePlugin" => BIOMEPLUGIN_FILTERS.clone(),
+            "convex" => CONVEX_FILTERS.clone(),
             "drizzle" => DRIZZLE_FILTERS.clone(),
             "next" => NEXT_FILTERS.clone(),
             "playwright" => PLAYWRIGHT_FILTERS.clone(),
@@ -433,6 +440,9 @@ impl DomainSelector {
                 .iter()
                 .any(|filter| filter.match_rule_name(group_name, rule_name)),
             "biomePlugin" => BIOMEPLUGIN_FILTERS
+                .iter()
+                .any(|filter| filter.match_rule_name(group_name, rule_name)),
+            "convex" => CONVEX_FILTERS
                 .iter()
                 .any(|filter| filter.match_rule_name(group_name, rule_name)),
             "drizzle" => DRIZZLE_FILTERS
