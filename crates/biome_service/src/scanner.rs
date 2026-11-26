@@ -59,8 +59,7 @@ use crate::workspace::{ScanProjectResult, ServiceNotification, WorkspaceError};
 use biome_diagnostics::serde::Diagnostic;
 use biome_diagnostics::{Diagnostic as _, DiagnosticExt, Error, Severity};
 use biome_fs::{
-    BiomePath, FileSystem, PathInterner, PathKind, PhysicalFileOwners, TraversalContext,
-    TraversalScope, normalize_path,
+    BiomePath, FileSystem, PathInterner, PathKind, TraversalContext, TraversalScope, normalize_path,
 };
 use camino::{Utf8Path, Utf8PathBuf};
 use crossbeam::channel::{Receiver, Sender, unbounded};
@@ -594,7 +593,6 @@ impl Scanner {
             workspace,
             project_key,
             interner,
-            physical_files: PhysicalFileOwners::default(),
             diagnostics_sender,
             evaluated_paths: Default::default(),
             scan_kind: scan_options.scan_kind.clone(),
@@ -1279,10 +1277,13 @@ fn scan_dependencies<W: WorkspaceScannerBridge>(
         folders.into_iter().map(Utf8Path::to_path_buf).collect()
     };
 
+    let scheduled = HashSet::new();
+
     rayon::scope(|s| {
         fn index_dependency<'a, W: WorkspaceScannerBridge>(
             s: &Scope<'a>,
             ctx: &'a ScanContext<'a, W>,
+            scheduled: &'a HashSet<Utf8PathBuf>,
             dependency_path: Utf8PathBuf,
         ) {
             let path = ctx.workspace.fs().biome_path(&dependency_path);
@@ -1301,10 +1302,11 @@ fn scan_dependencies<W: WorkspaceScannerBridge>(
                         &dependency_path,
                         IndexRequestKind::Dependency(ctx.trigger),
                         None,
+                        false,
                     )
                     .unwrap_or(true);
-                if !is_ignored {
-                    s.spawn(move |s| index_dependency(s, ctx, dependency_path));
+                if !is_ignored && scheduled.pin().insert(dependency_path.clone()) {
+                    s.spawn(move |s| index_dependency(s, ctx, scheduled, dependency_path));
                 }
             }
         }
@@ -1318,10 +1320,11 @@ fn scan_dependencies<W: WorkspaceScannerBridge>(
                     &dependency_path,
                     IndexRequestKind::Dependency(ctx.trigger),
                     None,
+                    false,
                 )
                 .unwrap_or(true);
-            if !is_ignored {
-                s.spawn(|s| index_dependency(s, ctx, dependency_path));
+            if !is_ignored && scheduled.pin().insert(dependency_path.clone()) {
+                s.spawn(|s| index_dependency(s, ctx, &scheduled, dependency_path));
             }
         }
     });
@@ -1390,9 +1393,6 @@ pub(crate) struct ScanContext<'app, W: WorkspaceScannerBridge> {
 
     /// Logical path interner used by the filesystem traversal.
     interner: PathInterner,
-
-    /// Physical files selected after logical path policy is applied.
-    physical_files: PhysicalFileOwners,
 
     /// Channel for reporting diagnostics during scanning.
     pub(crate) diagnostics_sender: Sender<Diagnostic>,
@@ -1505,26 +1505,6 @@ impl<W: WorkspaceScannerBridge> TraversalContext for ScanContext<'_, W> {
         &self.interner
     }
 
-    fn store_physical_path(
-        &self,
-        physical_path: Utf8PathBuf,
-        logical_path: BiomePath,
-        is_symlink: bool,
-    ) {
-        self.physical_files.select(
-            physical_path,
-            logical_path,
-            is_symlink,
-            |previous, selected| {
-                let evaluated_paths = self.evaluated_paths.pin();
-                if let Some(previous) = previous {
-                    evaluated_paths.remove(previous);
-                }
-                evaluated_paths.insert(selected.clone());
-            },
-        );
-    }
-
     fn evaluated_paths(&self) -> HashSetRef<'_, BiomePath, RandomState, LocalGuard<'_>> {
         self.evaluated_paths.pin()
     }
@@ -1540,13 +1520,19 @@ impl<W: WorkspaceScannerBridge> TraversalContext for ScanContext<'_, W> {
     //   the path belongs to a dependency.
     // - The kind of file system entry the path points to.
     // - The kind of scan we are performing.
-    fn can_handle_with_kind(&self, path: &BiomePath, path_kind: PathKind) -> bool {
+    fn can_handle_with_kind(
+        &self,
+        path: &BiomePath,
+        path_kind: PathKind,
+        ancestors_checked: bool,
+    ) -> bool {
         match self.workspace.is_ignored(
             self.project_key,
             &self.scan_kind,
             path.as_path(),
             self.request_kind,
             Some(path_kind),
+            ancestors_checked,
         ) {
             Ok(is_ignored) => !is_ignored,
             Err(_) => {

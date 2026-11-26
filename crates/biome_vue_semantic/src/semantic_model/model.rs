@@ -718,6 +718,8 @@ pub(crate) struct SymbolData {
     /// The node of the whole declaration, for a declaration written in
     /// JavaScript.
     pub(crate) node: Option<JsNodeId>,
+    /// The node of the name, for a declaration made by a JavaScript binding.
+    pub(crate) name_node: Option<JsNodeId>,
 }
 
 /// Where a reference is written.
@@ -797,6 +799,8 @@ pub(crate) struct ReferenceData {
     pub(crate) access: Access,
     pub(crate) call_args: Option<u8>,
     pub(crate) resolution: Resolution,
+    /// The node `range` covers, for a reference written in JavaScript.
+    pub(crate) node: Option<JsNodeId>,
 }
 
 /// The syntax a component was defined with.
@@ -875,9 +879,24 @@ pub(crate) struct SemanticModelData {
     /// template, or by a `<script src>` block.
     pub(crate) template_ref_uses_open: bool,
     pub(crate) js_nodes: Vec<JsNodeData>,
-    /// The nodes of the host document that rows of the model point to, in
-    /// the coordinates of the host document.
-    pub(crate) html_nodes: Vec<SyntaxNodePtr<HtmlLanguage>>,
+    /// The nodes of the host document that rows of the model point to.
+    pub(crate) html_nodes: Vec<HtmlNodeData>,
+}
+
+/// A node of the host document that a row of the model points to.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct HtmlNodeData {
+    /// The node, in the coordinates of the host document.
+    pub(crate) ptr: SyntaxNodePtr<HtmlLanguage>,
+    /// The row the node stands for.
+    pub(crate) row: HtmlRow,
+}
+
+/// The row of the model that a node of the host document stands for.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum HtmlRow {
+    Element(ElementId),
+    Attr(AttrId),
 }
 
 /// A JavaScript syntax node a row of the model stands for, by its range in the
@@ -895,6 +914,8 @@ pub(crate) struct JsNodeData {
     pub(crate) snippet: Option<SnippetId>,
     /// The node, in the coordinates of its tree.
     pub(crate) ptr: SyntaxNodePtr<JsLanguage>,
+    /// The first reference written at the node, if any.
+    pub(crate) reference: Option<ReferenceId>,
 }
 
 impl SemanticModelData {
@@ -1155,43 +1176,6 @@ impl VueSemanticModel {
             .iter()
             .position(|snippet| snippet.offset == offset)
             .map(|index| self.snippet(SnippetId::new(index)))
-    }
-
-    /// Returns the innermost element whose range in the host document
-    /// contains `host_range`.
-    pub fn element_at(&self, host_range: TextRange) -> Option<Element> {
-        // Elements are stored parents first, so the last match is the innermost.
-        self.data
-            .elements
-            .iter()
-            .rposition(|element| element.range.contains_range(host_range))
-            .map(|index| self.element(ElementId::new(index)))
-    }
-
-    /// Returns the attribute or directive written at `host_range`.
-    ///
-    /// `host_range` must be the whole attribute without its surrounding
-    /// whitespace, such as the range of `:id="'foo'"`.
-    pub fn attr_at(&self, host_range: TextRange) -> Option<Attr> {
-        // Attributes are stored in source order and do not overlap.
-        let index = self
-            .data
-            .attrs
-            .partition_point(|attr| attr.range.start() < host_range.start());
-        let attr = self.data.attrs.get(index)?;
-        (attr.range == host_range).then(|| Attr {
-            data: self.data.clone(),
-            id: AttrId::new(index),
-        })
-    }
-
-    /// Returns the reference written at `host_range`.
-    pub fn reference_at(&self, host_range: TextRange) -> Option<Reference> {
-        self.data
-            .references
-            .iter()
-            .position(|reference| reference.range == host_range)
-            .map(|index| self.reference(ReferenceId::new(index)))
     }
 
     /// Returns the elements at the root of the template block.
@@ -1888,6 +1872,18 @@ impl Symbol {
         self.row().node
     }
 
+    /// The node of the name, the one [`Self::range`] covers, for a
+    /// declaration made by a JavaScript binding: a top-level binding of a
+    /// script block, or a parameter of `v-slot`.
+    ///
+    /// Returns `None` for every other declaration. The name of a prop, for
+    /// example, is part of the syntax of [`Self::js_node`].
+    ///
+    /// The node is in the tree [`Self::snippet`] names.
+    pub fn name_node(&self) -> Option<JsNodeId> {
+        self.row().name_node
+    }
+
     /// The references that resolve to this symbol.
     pub fn uses(&self) -> impl Iterator<Item = Reference> + '_ {
         self.data.uses[self.id.index()].iter().map(|id| Reference {
@@ -1933,6 +1929,17 @@ impl Reference {
     /// The range of the reference in the host document.
     pub fn host_range(&self) -> TextRange {
         self.row().range
+    }
+
+    /// The node of the reference, the one [`Self::range`] covers, for a
+    /// reference written in JavaScript.
+    ///
+    /// Returns `None` for a reference written in the markup of the template,
+    /// whose [`Self::site`] names its element or attribute instead.
+    ///
+    /// The node is in the tree [`Self::snippet`] names.
+    pub fn js_node(&self) -> Option<JsNodeId> {
+        self.row().node
     }
 
     pub fn snippet(&self) -> Option<Snippet> {

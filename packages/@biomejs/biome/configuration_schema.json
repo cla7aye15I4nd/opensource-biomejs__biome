@@ -2051,6 +2051,26 @@
 				}
 			]
 		},
+		"DefaultExportStyle": {
+			"description": "Where a default-exported function or class is declared.",
+			"oneOf": [
+				{
+					"description": "Require the declaration inside the `export default` statement. This is the default.",
+					"type": "string",
+					"const": "inline"
+				},
+				{
+					"description": "Require a separate declaration, followed by `export default` with its name.\nFunctions must be declared as `const` arrow functions.",
+					"type": "string",
+					"const": "separate"
+				},
+				{
+					"description": "Don't check this kind of declaration.",
+					"type": "string",
+					"const": "ignore"
+				}
+			]
+		},
 		"DefineEmitsDeclarationStyle": {
 			"oneOf": [
 				{
@@ -3611,6 +3631,13 @@
 			"type": "object",
 			"additionalProperties": false
 		},
+		"NoArrayReduceConfiguration": {
+			"oneOf": [
+				{ "$ref": "#/$defs/RulePlainConfiguration" },
+				{ "$ref": "#/$defs/RuleWithNoArrayReduceOptions" }
+			]
+		},
+		"NoArrayReduceOptions": { "type": "object", "additionalProperties": false },
 		"NoArraySortForMinMaxConfiguration": {
 			"oneOf": [
 				{ "$ref": "#/$defs/RulePlainConfiguration" },
@@ -4084,6 +4111,36 @@
 			"type": "object",
 			"additionalProperties": false
 		},
+		"NoConvexDuplicateIndexesConfiguration": {
+			"oneOf": [
+				{ "$ref": "#/$defs/RulePlainConfiguration" },
+				{ "$ref": "#/$defs/RuleWithNoConvexDuplicateIndexesOptions" }
+			]
+		},
+		"NoConvexDuplicateIndexesOptions": {
+			"type": "object",
+			"additionalProperties": false
+		},
+		"NoConvexProcessEnvConfiguration": {
+			"oneOf": [
+				{ "$ref": "#/$defs/RulePlainConfiguration" },
+				{ "$ref": "#/$defs/RuleWithNoConvexProcessEnvOptions" }
+			]
+		},
+		"NoConvexProcessEnvOptions": {
+			"type": "object",
+			"additionalProperties": false
+		},
+		"NoConvexQueryFilterConfiguration": {
+			"oneOf": [
+				{ "$ref": "#/$defs/RulePlainConfiguration" },
+				{ "$ref": "#/$defs/RuleWithNoConvexQueryFilterOptions" }
+			]
+		},
+		"NoConvexQueryFilterOptions": {
+			"type": "object",
+			"additionalProperties": false
+		},
 		"NoConvexTopOfHourCronsConfiguration": {
 			"oneOf": [
 				{ "$ref": "#/$defs/RulePlainConfiguration" },
@@ -4441,6 +4498,16 @@
 			]
 		},
 		"NoDuplicateEnumValuesOptions": {
+			"type": "object",
+			"additionalProperties": false
+		},
+		"NoDuplicateExportsConfiguration": {
+			"oneOf": [
+				{ "$ref": "#/$defs/RulePlainConfiguration" },
+				{ "$ref": "#/$defs/RuleWithNoDuplicateExportsOptions" }
+			]
+		},
+		"NoDuplicateExportsOptions": {
 			"type": "object",
 			"additionalProperties": false
 		},
@@ -5918,6 +5985,16 @@
 			]
 		},
 		"NoMultilineStringOptions": {
+			"type": "object",
+			"additionalProperties": false
+		},
+		"NoMutableExportsConfiguration": {
+			"oneOf": [
+				{ "$ref": "#/$defs/RulePlainConfiguration" },
+				{ "$ref": "#/$defs/RuleWithNoMutableExportsOptions" }
+			]
+		},
+		"NoMutableExportsOptions": {
 			"type": "object",
 			"additionalProperties": false
 		},
@@ -8378,6 +8455,16 @@
 			"type": "object",
 			"additionalProperties": false
 		},
+		"NoUselessReExportAllConfiguration": {
+			"oneOf": [
+				{ "$ref": "#/$defs/RulePlainConfiguration" },
+				{ "$ref": "#/$defs/RuleWithNoUselessReExportAllOptions" }
+			]
+		},
+		"NoUselessReExportAllOptions": {
+			"type": "object",
+			"additionalProperties": false
+		},
 		"NoUselessRecursionConfiguration": {
 			"oneOf": [
 				{ "$ref": "#/$defs/RulePlainConfiguration" },
@@ -9574,6 +9661,13 @@
 						{ "type": "null" }
 					]
 				},
+				"noArrayReduce": {
+					"description": "Disallow the reduce() and reduceRight() array methods.\nSee https://biomejs.dev/linter/rules/no-array-reduce",
+					"anyOf": [
+						{ "$ref": "#/$defs/NoArrayReduceConfiguration" },
+						{ "type": "null" }
+					]
+				},
 				"noArraySortForMinMax": {
 					"description": "Disallow sorting an array only to read its smallest or largest value.\nSee https://biomejs.dev/linter/rules/no-array-sort-for-min-max",
 					"anyOf": [
@@ -9686,6 +9780,27 @@
 						{ "type": "null" }
 					]
 				},
+				"noConvexDuplicateIndexes": {
+					"description": "Disallow Convex database indexes whose fields are the first fields of another index on the same table.\nSee https://biomejs.dev/linter/rules/no-convex-duplicate-indexes",
+					"anyOf": [
+						{ "$ref": "#/$defs/NoConvexDuplicateIndexesConfiguration" },
+						{ "type": "null" }
+					]
+				},
+				"noConvexProcessEnv": {
+					"description": "Disallow process.env in Convex functions.\nSee https://biomejs.dev/linter/rules/no-convex-process-env",
+					"anyOf": [
+						{ "$ref": "#/$defs/NoConvexProcessEnvConfiguration" },
+						{ "type": "null" }
+					]
+				},
+				"noConvexQueryFilter": {
+					"description": "Disallow calling .filter() on a Convex database query.\nSee https://biomejs.dev/linter/rules/no-convex-query-filter",
+					"anyOf": [
+						{ "$ref": "#/$defs/NoConvexQueryFilterConfiguration" },
+						{ "type": "null" }
+					]
+				},
 				"noConvexTopOfHourCrons": {
 					"description": "Disallow scheduling Convex cron jobs at the start of the hour.\nSee https://biomejs.dev/linter/rules/no-convex-top-of-hour-crons",
 					"anyOf": [
@@ -9720,6 +9835,13 @@
 						{
 							"$ref": "#/$defs/NoDrizzleDbObjectInsideTransactionConfiguration"
 						},
+						{ "type": "null" }
+					]
+				},
+				"noDuplicateExports": {
+					"description": "Disallow exporting the same name more than once.\nSee https://biomejs.dev/linter/rules/no-duplicate-exports",
+					"anyOf": [
+						{ "$ref": "#/$defs/NoDuplicateExportsConfiguration" },
 						{ "type": "null" }
 					]
 				},
@@ -9958,6 +10080,13 @@
 					"description": "Disallow spreading values in ways that can cause unexpected results.\nSee https://biomejs.dev/linter/rules/no-misused-spread",
 					"anyOf": [
 						{ "$ref": "#/$defs/NoMisusedSpreadConfiguration" },
+						{ "type": "null" }
+					]
+				},
+				"noMutableExports": {
+					"description": "Disallow exporting variables declared with let or var.\nSee https://biomejs.dev/linter/rules/no-mutable-exports",
+					"anyOf": [
+						{ "$ref": "#/$defs/NoMutableExportsConfiguration" },
 						{ "type": "null" }
 					]
 				},
@@ -10597,6 +10726,13 @@
 						{ "type": "null" }
 					]
 				},
+				"noUselessReExportAll": {
+					"description": "Disallow export * from a module that has no named exports.\nSee https://biomejs.dev/linter/rules/no-useless-re-export-all",
+					"anyOf": [
+						{ "$ref": "#/$defs/NoUselessReExportAllConfiguration" },
+						{ "type": "null" }
+					]
+				},
 				"noUselessRecursion": {
 					"description": "Disallow functions that return a call to themselves when a loop can do the same work.\nSee https://biomejs.dev/linter/rules/no-useless-recursion",
 					"anyOf": [
@@ -11231,6 +11367,13 @@
 						{ "type": "null" }
 					]
 				},
+				"useConsistentDefaultExportStyle": {
+					"description": "Enforce a consistent style for default-exported functions and classes.\nSee https://biomejs.dev/linter/rules/use-consistent-default-export-style",
+					"anyOf": [
+						{ "$ref": "#/$defs/UseConsistentDefaultExportStyleConfiguration" },
+						{ "type": "null" }
+					]
+				},
 				"useConsistentExistenceIndexCheck": {
 					"description": "Enforce comparing with -1 when checking whether indexOf(), lastIndexOf(), findIndex(), or findLastIndex() found an element.\nSee https://biomejs.dev/linter/rules/use-consistent-existence-index-check",
 					"anyOf": [
@@ -11308,6 +11451,13 @@
 						{ "type": "null" }
 					]
 				},
+				"useConvexAccessControl": {
+					"description": "Require public Convex functions to call an access control function.\nSee https://biomejs.dev/linter/rules/use-convex-access-control",
+					"anyOf": [
+						{ "$ref": "#/$defs/UseConvexAccessControlConfiguration" },
+						{ "type": "null" }
+					]
+				},
 				"useDescribeFunctionTitle": {
 					"description": "Require passing an imported function as a test suite title instead of a string with its name.\nSee https://biomejs.dev/linter/rules/use-describe-function-title",
 					"anyOf": [
@@ -11326,6 +11476,13 @@
 					"description": "Require an early continue instead of an if statement that wraps the rest of a loop body.\nSee https://biomejs.dev/linter/rules/use-early-continue",
 					"anyOf": [
 						{ "$ref": "#/$defs/UseEarlyContinueConfiguration" },
+						{ "type": "null" }
+					]
+				},
+				"useElseIf": {
+					"description": "Require else if when adjacent if statements compare the same value against different values.\nSee https://biomejs.dev/linter/rules/use-else-if",
+					"anyOf": [
+						{ "$ref": "#/$defs/UseElseIfConfiguration" },
 						{ "type": "null" }
 					]
 				},
@@ -11497,6 +11654,13 @@
 						{ "type": "null" }
 					]
 				},
+				"useNegativeIndex": {
+					"description": "Prefer negative indexes over subtracting from .length.\nSee https://biomejs.dev/linter/rules/use-negative-index",
+					"anyOf": [
+						{ "$ref": "#/$defs/UseNegativeIndexConfiguration" },
+						{ "type": "null" }
+					]
+				},
 				"useNextScriptForGoogleAnalytics": {
 					"description": "Enforce the use of the @next/third-parties/google components to load Google Analytics and Google Tag Manager.\nSee https://biomejs.dev/linter/rules/use-next-script-for-google-analytics",
 					"anyOf": [
@@ -11596,6 +11760,13 @@
 					"description": "Enforce RegExp#exec over String#match if no global flag is provided.\nSee https://biomejs.dev/linter/rules/use-regexp-exec",
 					"anyOf": [
 						{ "$ref": "#/$defs/UseRegexpExecConfiguration" },
+						{ "type": "null" }
+					]
+				},
+				"useSetMethods": {
+					"description": "Prefer the methods of Set for combining and comparing Sets.\nSee https://biomejs.dev/linter/rules/use-set-methods",
+					"anyOf": [
+						{ "$ref": "#/$defs/UseSetMethodsConfiguration" },
 						{ "type": "null" }
 					]
 				},
@@ -13154,6 +13325,15 @@
 			"additionalProperties": false,
 			"required": ["level"]
 		},
+		"RuleWithNoArrayReduceOptions": {
+			"type": "object",
+			"properties": {
+				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
+				"options": { "$ref": "#/$defs/NoArrayReduceOptions" }
+			},
+			"additionalProperties": false,
+			"required": ["level"]
+		},
 		"RuleWithNoArraySortForMinMaxOptions": {
 			"type": "object",
 			"properties": {
@@ -13634,6 +13814,37 @@
 			"additionalProperties": false,
 			"required": ["level"]
 		},
+		"RuleWithNoConvexDuplicateIndexesOptions": {
+			"type": "object",
+			"properties": {
+				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
+				"options": { "$ref": "#/$defs/NoConvexDuplicateIndexesOptions" }
+			},
+			"additionalProperties": false,
+			"required": ["level"]
+		},
+		"RuleWithNoConvexProcessEnvOptions": {
+			"type": "object",
+			"properties": {
+				"fix": {
+					"description": "Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.",
+					"anyOf": [{ "$ref": "#/$defs/FixKind" }, { "type": "null" }]
+				},
+				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
+				"options": { "$ref": "#/$defs/NoConvexProcessEnvOptions" }
+			},
+			"additionalProperties": false,
+			"required": ["level"]
+		},
+		"RuleWithNoConvexQueryFilterOptions": {
+			"type": "object",
+			"properties": {
+				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
+				"options": { "$ref": "#/$defs/NoConvexQueryFilterOptions" }
+			},
+			"additionalProperties": false,
+			"required": ["level"]
+		},
 		"RuleWithNoConvexTopOfHourCronsOptions": {
 			"type": "object",
 			"properties": {
@@ -13941,6 +14152,15 @@
 			"properties": {
 				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
 				"options": { "$ref": "#/$defs/NoDuplicateEnumValuesOptions" }
+			},
+			"additionalProperties": false,
+			"required": ["level"]
+		},
+		"RuleWithNoDuplicateExportsOptions": {
+			"type": "object",
+			"properties": {
+				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
+				"options": { "$ref": "#/$defs/NoDuplicateExportsOptions" }
 			},
 			"additionalProperties": false,
 			"required": ["level"]
@@ -15196,6 +15416,15 @@
 			"properties": {
 				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
 				"options": { "$ref": "#/$defs/NoMultilineStringOptions" }
+			},
+			"additionalProperties": false,
+			"required": ["level"]
+		},
+		"RuleWithNoMutableExportsOptions": {
+			"type": "object",
+			"properties": {
+				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
+				"options": { "$ref": "#/$defs/NoMutableExportsOptions" }
 			},
 			"additionalProperties": false,
 			"required": ["level"]
@@ -17463,6 +17692,15 @@
 			"additionalProperties": false,
 			"required": ["level"]
 		},
+		"RuleWithNoUselessReExportAllOptions": {
+			"type": "object",
+			"properties": {
+				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
+				"options": { "$ref": "#/$defs/NoUselessReExportAllOptions" }
+			},
+			"additionalProperties": false,
+			"required": ["level"]
+		},
 		"RuleWithNoUselessRecursionOptions": {
 			"type": "object",
 			"properties": {
@@ -18971,6 +19209,19 @@
 			"additionalProperties": false,
 			"required": ["level"]
 		},
+		"RuleWithUseConsistentDefaultExportStyleOptions": {
+			"type": "object",
+			"properties": {
+				"fix": {
+					"description": "Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.",
+					"anyOf": [{ "$ref": "#/$defs/FixKind" }, { "type": "null" }]
+				},
+				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
+				"options": { "$ref": "#/$defs/UseConsistentDefaultExportStyleOptions" }
+			},
+			"additionalProperties": false,
+			"required": ["level"]
+		},
 		"RuleWithUseConsistentEnumValueTypeOptions": {
 			"type": "object",
 			"properties": {
@@ -19190,6 +19441,15 @@
 			"additionalProperties": false,
 			"required": ["level"]
 		},
+		"RuleWithUseConvexAccessControlOptions": {
+			"type": "object",
+			"properties": {
+				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
+				"options": { "$ref": "#/$defs/UseConvexAccessControlOptions" }
+			},
+			"additionalProperties": false,
+			"required": ["level"]
+		},
 		"RuleWithUseDateNowOptions": {
 			"type": "object",
 			"properties": {
@@ -19322,6 +19582,19 @@
 				},
 				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
 				"options": { "$ref": "#/$defs/UseEarlyContinueOptions" }
+			},
+			"additionalProperties": false,
+			"required": ["level"]
+		},
+		"RuleWithUseElseIfOptions": {
+			"type": "object",
+			"properties": {
+				"fix": {
+					"description": "Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.",
+					"anyOf": [{ "$ref": "#/$defs/FixKind" }, { "type": "null" }]
+				},
+				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
+				"options": { "$ref": "#/$defs/UseElseIfOptions" }
 			},
 			"additionalProperties": false,
 			"required": ["level"]
@@ -20142,6 +20415,19 @@
 			"additionalProperties": false,
 			"required": ["level"]
 		},
+		"RuleWithUseNegativeIndexOptions": {
+			"type": "object",
+			"properties": {
+				"fix": {
+					"description": "Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.",
+					"anyOf": [{ "$ref": "#/$defs/FixKind" }, { "type": "null" }]
+				},
+				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
+				"options": { "$ref": "#/$defs/UseNegativeIndexOptions" }
+			},
+			"additionalProperties": false,
+			"required": ["level"]
+		},
 		"RuleWithUseNextScriptForGoogleAnalyticsOptions": {
 			"type": "object",
 			"properties": {
@@ -20571,6 +20857,19 @@
 			"properties": {
 				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
 				"options": { "$ref": "#/$defs/UseSemanticElementsOptions" }
+			},
+			"additionalProperties": false,
+			"required": ["level"]
+		},
+		"RuleWithUseSetMethodsOptions": {
+			"type": "object",
+			"properties": {
+				"fix": {
+					"description": "Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.",
+					"anyOf": [{ "$ref": "#/$defs/FixKind" }, { "type": "null" }]
+				},
+				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
+				"options": { "$ref": "#/$defs/UseSetMethodsOptions" }
 			},
 			"additionalProperties": false,
 			"required": ["level"]
@@ -24878,6 +25177,33 @@
 			"type": "object",
 			"additionalProperties": false
 		},
+		"UseConsistentDefaultExportStyleConfiguration": {
+			"oneOf": [
+				{ "$ref": "#/$defs/RulePlainConfiguration" },
+				{ "$ref": "#/$defs/RuleWithUseConsistentDefaultExportStyleOptions" }
+			]
+		},
+		"UseConsistentDefaultExportStyleOptions": {
+			"description": "Configures the required declaration style for default-exported functions and classes.",
+			"type": "object",
+			"properties": {
+				"classes": {
+					"description": "The declaration style for default-exported classes. Default: `\"inline\"`.",
+					"anyOf": [
+						{ "$ref": "#/$defs/DefaultExportStyle" },
+						{ "type": "null" }
+					]
+				},
+				"functions": {
+					"description": "The declaration style for default-exported functions. Default: `\"inline\"`.",
+					"anyOf": [
+						{ "$ref": "#/$defs/DefaultExportStyle" },
+						{ "type": "null" }
+					]
+				}
+			},
+			"additionalProperties": false
+		},
 		"UseConsistentEnumValueTypeConfiguration": {
 			"oneOf": [
 				{ "$ref": "#/$defs/RulePlainConfiguration" },
@@ -25182,6 +25508,28 @@
 			"type": "object",
 			"additionalProperties": false
 		},
+		"UseConvexAccessControlConfiguration": {
+			"oneOf": [
+				{ "$ref": "#/$defs/RulePlainConfiguration" },
+				{ "$ref": "#/$defs/RuleWithUseConvexAccessControlOptions" }
+			]
+		},
+		"UseConvexAccessControlOptions": {
+			"type": "object",
+			"properties": {
+				"functions": {
+					"description": "Names of functions that count as access control functions, in addition to the names\nmatched by `prefixes`.",
+					"type": ["array", "null"],
+					"items": { "type": "string" }
+				},
+				"prefixes": {
+					"description": "Words that start the name of an access control function. A name matches a prefix when it's\nthe prefix on its own, or the prefix followed by an uppercase letter or `_`.\n\nSetting this option replaces the default prefixes: `assert`, `can`, `check`, `ensure`,\n`has` and `require`.",
+					"type": ["array", "null"],
+					"items": { "type": "string" }
+				}
+			},
+			"additionalProperties": false
+		},
 		"UseDateNowConfiguration": {
 			"oneOf": [
 				{ "$ref": "#/$defs/RulePlainConfiguration" },
@@ -25330,6 +25678,13 @@
 			},
 			"additionalProperties": false
 		},
+		"UseElseIfConfiguration": {
+			"oneOf": [
+				{ "$ref": "#/$defs/RulePlainConfiguration" },
+				{ "$ref": "#/$defs/RuleWithUseElseIfOptions" }
+			]
+		},
+		"UseElseIfOptions": { "type": "object", "additionalProperties": false },
 		"UseEnumInitializersConfiguration": {
 			"oneOf": [
 				{ "$ref": "#/$defs/RulePlainConfiguration" },
@@ -26274,6 +26629,16 @@
 			},
 			"additionalProperties": false
 		},
+		"UseNegativeIndexConfiguration": {
+			"oneOf": [
+				{ "$ref": "#/$defs/RulePlainConfiguration" },
+				{ "$ref": "#/$defs/RuleWithUseNegativeIndexOptions" }
+			]
+		},
+		"UseNegativeIndexOptions": {
+			"type": "object",
+			"additionalProperties": false
+		},
 		"UseNextScriptForGoogleAnalyticsConfiguration": {
 			"oneOf": [
 				{ "$ref": "#/$defs/RulePlainConfiguration" },
@@ -26764,6 +27129,13 @@
 			"type": "object",
 			"additionalProperties": false
 		},
+		"UseSetMethodsConfiguration": {
+			"oneOf": [
+				{ "$ref": "#/$defs/RulePlainConfiguration" },
+				{ "$ref": "#/$defs/RuleWithUseSetMethodsOptions" }
+			]
+		},
+		"UseSetMethodsOptions": { "type": "object", "additionalProperties": false },
 		"UseSetSizeConfiguration": {
 			"oneOf": [
 				{ "$ref": "#/$defs/RulePlainConfiguration" },

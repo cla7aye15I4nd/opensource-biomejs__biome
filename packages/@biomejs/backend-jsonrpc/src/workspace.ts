@@ -2,6 +2,10 @@
 import type { Transport } from "./transport";
 export interface SupportsFeatureParams {
 	features: FeatureName;
+	/**
+	 * Controls whether the ignore checks also cover the directories that contain the file.
+	 */
+	ignoreKind: IgnoreKind;
 	inlineConfig?: Configuration;
 	/**
 	 * Features that shouldn't be enabled
@@ -12,6 +16,11 @@ export interface SupportsFeatureParams {
 	skipIgnoreCheck?: boolean;
 }
 export type FeatureName = FeatureKind[];
+/**
+ * Selects which paths an ignore check matches against the `files.includes` patterns and the
+ * version control ignore files.
+ */
+export type IgnoreKind = "path" | "ancestors";
 /**
  * The configuration contained in `biome.json` or `biome.jsonc`.
  */
@@ -2975,6 +2984,11 @@ export interface Nursery {
 	 */
 	noArrayMethodsOnArguments?: NoArrayMethodsOnArgumentsConfiguration;
 	/**
+	 * Disallow the reduce() and reduceRight() array methods.
+	 * See https://biomejs.dev/linter/rules/no-array-reduce
+	 */
+	noArrayReduce?: NoArrayReduceConfiguration;
+	/**
 	 * Disallow sorting an array only to read its smallest or largest value.
 	 * See https://biomejs.dev/linter/rules/no-array-sort-for-min-max
 	 */
@@ -3055,6 +3069,21 @@ export interface Nursery {
 	 */
 	noConstantComparisons?: NoConstantComparisonsConfiguration;
 	/**
+	 * Disallow Convex database indexes whose fields are the first fields of another index on the same table.
+	 * See https://biomejs.dev/linter/rules/no-convex-duplicate-indexes
+	 */
+	noConvexDuplicateIndexes?: NoConvexDuplicateIndexesConfiguration;
+	/**
+	 * Disallow process.env in Convex functions.
+	 * See https://biomejs.dev/linter/rules/no-convex-process-env
+	 */
+	noConvexProcessEnv?: NoConvexProcessEnvConfiguration;
+	/**
+	 * Disallow calling .filter() on a Convex database query.
+	 * See https://biomejs.dev/linter/rules/no-convex-query-filter
+	 */
+	noConvexQueryFilter?: NoConvexQueryFilterConfiguration;
+	/**
 	 * Disallow scheduling Convex cron jobs at the start of the hour.
 	 * See https://biomejs.dev/linter/rules/no-convex-top-of-hour-crons
 	 */
@@ -3079,6 +3108,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/no-drizzle-db-object-inside-transaction
 	 */
 	noDrizzleDbObjectInsideTransaction?: NoDrizzleDbObjectInsideTransactionConfiguration;
+	/**
+	 * Disallow exporting the same name more than once.
+	 * See https://biomejs.dev/linter/rules/no-duplicate-exports
+	 */
+	noDuplicateExports?: NoDuplicateExportsConfiguration;
 	/**
 	 * Disallow two keys with the same name inside YAML maps.
 	 * See https://biomejs.dev/linter/rules/no-duplicate-map-keys
@@ -3249,6 +3283,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/no-misused-spread
 	 */
 	noMisusedSpread?: NoMisusedSpreadConfiguration;
+	/**
+	 * Disallow exporting variables declared with let or var.
+	 * See https://biomejs.dev/linter/rules/no-mutable-exports
+	 */
+	noMutableExports?: NoMutableExportsConfiguration;
 	/**
 	 * Disallow negating the result of Array#some() or Array#every().
 	 * See https://biomejs.dev/linter/rules/no-negated-array-predicate
@@ -3700,6 +3739,11 @@ export interface Nursery {
 	 */
 	noUselessQualifier?: NoUselessQualifierConfiguration;
 	/**
+	 * Disallow export * from a module that has no named exports.
+	 * See https://biomejs.dev/linter/rules/no-useless-re-export-all
+	 */
+	noUselessReExportAll?: NoUselessReExportAllConfiguration;
+	/**
 	 * Disallow functions that return a call to themselves when a loop can do the same work.
 	 * See https://biomejs.dev/linter/rules/no-useless-recursion
 	 */
@@ -4150,6 +4194,11 @@ export interface Nursery {
 	 */
 	useConsistentBooleanProps?: UseConsistentBooleanPropsConfiguration;
 	/**
+	 * Enforce a consistent style for default-exported functions and classes.
+	 * See https://biomejs.dev/linter/rules/use-consistent-default-export-style
+	 */
+	useConsistentDefaultExportStyle?: UseConsistentDefaultExportStyleConfiguration;
+	/**
 	 * Enforce comparing with -1 when checking whether indexOf(), lastIndexOf(), findIndex(), or findLastIndex() found an element.
 	 * See https://biomejs.dev/linter/rules/use-consistent-existence-index-check
 	 */
@@ -4205,6 +4254,11 @@ export interface Nursery {
 	 */
 	useControlLabel?: UseControlLabelConfiguration;
 	/**
+	 * Require public Convex functions to call an access control function.
+	 * See https://biomejs.dev/linter/rules/use-convex-access-control
+	 */
+	useConvexAccessControl?: UseConvexAccessControlConfiguration;
+	/**
 	 * Require passing an imported function as a test suite title instead of a string with its name.
 	 * See https://biomejs.dev/linter/rules/use-describe-function-title
 	 */
@@ -4219,6 +4273,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/use-early-continue
 	 */
 	useEarlyContinue?: UseEarlyContinueConfiguration;
+	/**
+	 * Require else if when adjacent if statements compare the same value against different values.
+	 * See https://biomejs.dev/linter/rules/use-else-if
+	 */
+	useElseIf?: UseElseIfConfiguration;
 	/**
 	 * Require switch-case statements to be exhaustive.
 	 * See https://biomejs.dev/linter/rules/use-exhaustive-switch-cases
@@ -4340,6 +4399,11 @@ export interface Nursery {
 	 */
 	useNamedLayer?: UseNamedLayerConfiguration;
 	/**
+	 * Prefer negative indexes over subtracting from .length.
+	 * See https://biomejs.dev/linter/rules/use-negative-index
+	 */
+	useNegativeIndex?: UseNegativeIndexConfiguration;
+	/**
 	 * Enforce the use of the @next/third-parties/google components to load Google Analytics and Google Tag Manager.
 	 * See https://biomejs.dev/linter/rules/use-next-script-for-google-analytics
 	 */
@@ -4409,6 +4473,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/use-regexp-exec
 	 */
 	useRegexpExec?: UseRegexpExecConfiguration;
+	/**
+	 * Prefer the methods of Set for combining and comparing Sets.
+	 * See https://biomejs.dev/linter/rules/use-set-methods
+	 */
+	useSetMethods?: UseSetMethodsConfiguration;
 	/**
 	 * Prefer reading the size property of a Set over converting the Set to an array to read its length.
 	 * See https://biomejs.dev/linter/rules/use-set-size
@@ -6950,6 +7019,9 @@ export type NoArrayForEachConfiguration =
 export type NoArrayMethodsOnArgumentsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoArrayMethodsOnArgumentsOptions;
+export type NoArrayReduceConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoArrayReduceOptions;
 export type NoArraySortForMinMaxConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoArraySortForMinMaxOptions;
@@ -6998,6 +7070,15 @@ export type NoConsoleSpacesConfiguration =
 export type NoConstantComparisonsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoConstantComparisonsOptions;
+export type NoConvexDuplicateIndexesConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoConvexDuplicateIndexesOptions;
+export type NoConvexProcessEnvConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoConvexProcessEnvOptions;
+export type NoConvexQueryFilterConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoConvexQueryFilterOptions;
 export type NoConvexTopOfHourCronsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoConvexTopOfHourCronsOptions;
@@ -7013,6 +7094,9 @@ export type NoDoubleComparisonConfiguration =
 export type NoDrizzleDbObjectInsideTransactionConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoDrizzleDbObjectInsideTransactionOptions;
+export type NoDuplicateExportsConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoDuplicateExportsOptions;
 export type NoDuplicateMapKeysConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoDuplicateMapKeysOptions;
@@ -7115,6 +7199,9 @@ export type NoMisusedPromisesConfiguration =
 export type NoMisusedSpreadConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoMisusedSpreadOptions;
+export type NoMutableExportsConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoMutableExportsOptions;
 export type NoNegatedArrayPredicateConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoNegatedArrayPredicateOptions;
@@ -7385,6 +7472,9 @@ export type NoUselessParameterPropertyAssignmentConfiguration =
 export type NoUselessQualifierConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoUselessQualifierOptions;
+export type NoUselessReExportAllConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoUselessReExportAllOptions;
 export type NoUselessRecursionConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoUselessRecursionOptions;
@@ -7655,6 +7745,9 @@ export type UseConsistentBooleanNameConfiguration =
 export type UseConsistentBooleanPropsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseConsistentBooleanPropsOptions;
+export type UseConsistentDefaultExportStyleConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseConsistentDefaultExportStyleOptions;
 export type UseConsistentExistenceIndexCheckConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseConsistentExistenceIndexCheckOptions;
@@ -7688,6 +7781,9 @@ export type UseConsistentUnicodeBomConfiguration =
 export type UseControlLabelConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseControlLabelOptions;
+export type UseConvexAccessControlConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseConvexAccessControlOptions;
 export type UseDescribeFunctionTitleConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseDescribeFunctionTitleOptions;
@@ -7697,6 +7793,9 @@ export type UseDisposablesConfiguration =
 export type UseEarlyContinueConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseEarlyContinueOptions;
+export type UseElseIfConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseElseIfOptions;
 export type UseExhaustiveSwitchCasesConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseExhaustiveSwitchCasesOptions;
@@ -7769,6 +7868,9 @@ export type UseNamedFunctionConfiguration =
 export type UseNamedLayerConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseNamedLayerOptions;
+export type UseNegativeIndexConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseNegativeIndexOptions;
 export type UseNextScriptForGoogleAnalyticsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseNextScriptForGoogleAnalyticsOptions;
@@ -7811,6 +7913,9 @@ export type UseReactNativeValidPlatformColorsConfiguration =
 export type UseRegexpExecConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseRegexpExecOptions;
+export type UseSetMethodsConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseSetMethodsOptions;
 export type UseSetSizeConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseSetSizeOptions;
@@ -10139,6 +10244,10 @@ export interface RuleWithNoArrayMethodsOnArgumentsOptions {
 	level: RulePlainConfiguration;
 	options?: NoArrayMethodsOnArgumentsOptions;
 }
+export interface RuleWithNoArrayReduceOptions {
+	level: RulePlainConfiguration;
+	options?: NoArrayReduceOptions;
+}
 export interface RuleWithNoArraySortForMinMaxOptions {
 	/**
 	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
@@ -10223,6 +10332,22 @@ export interface RuleWithNoConstantComparisonsOptions {
 	level: RulePlainConfiguration;
 	options?: NoConstantComparisonsOptions;
 }
+export interface RuleWithNoConvexDuplicateIndexesOptions {
+	level: RulePlainConfiguration;
+	options?: NoConvexDuplicateIndexesOptions;
+}
+export interface RuleWithNoConvexProcessEnvOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: NoConvexProcessEnvOptions;
+}
+export interface RuleWithNoConvexQueryFilterOptions {
+	level: RulePlainConfiguration;
+	options?: NoConvexQueryFilterOptions;
+}
 export interface RuleWithNoConvexTopOfHourCronsOptions {
 	level: RulePlainConfiguration;
 	options?: NoConvexTopOfHourCronsOptions;
@@ -10250,6 +10375,10 @@ export interface RuleWithNoDoubleComparisonOptions {
 export interface RuleWithNoDrizzleDbObjectInsideTransactionOptions {
 	level: RulePlainConfiguration;
 	options?: NoDrizzleDbObjectInsideTransactionOptions;
+}
+export interface RuleWithNoDuplicateExportsOptions {
+	level: RulePlainConfiguration;
+	options?: NoDuplicateExportsOptions;
 }
 export interface RuleWithNoDuplicateMapKeysOptions {
 	level: RulePlainConfiguration;
@@ -10430,6 +10559,10 @@ export interface RuleWithNoMisusedPromisesOptions {
 export interface RuleWithNoMisusedSpreadOptions {
 	level: RulePlainConfiguration;
 	options?: NoMisusedSpreadOptions;
+}
+export interface RuleWithNoMutableExportsOptions {
+	level: RulePlainConfiguration;
+	options?: NoMutableExportsOptions;
 }
 export interface RuleWithNoNegatedArrayPredicateOptions {
 	/**
@@ -10903,6 +11036,10 @@ export interface RuleWithNoUselessQualifierOptions {
 	level: RulePlainConfiguration;
 	options?: NoUselessQualifierOptions;
 }
+export interface RuleWithNoUselessReExportAllOptions {
+	level: RulePlainConfiguration;
+	options?: NoUselessReExportAllOptions;
+}
 export interface RuleWithNoUselessRecursionOptions {
 	level: RulePlainConfiguration;
 	options?: NoUselessRecursionOptions;
@@ -11355,6 +11492,14 @@ export interface RuleWithUseConsistentBooleanPropsOptions {
 	level: RulePlainConfiguration;
 	options?: UseConsistentBooleanPropsOptions;
 }
+export interface RuleWithUseConsistentDefaultExportStyleOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: UseConsistentDefaultExportStyleOptions;
+}
 export interface RuleWithUseConsistentExistenceIndexCheckOptions {
 	/**
 	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
@@ -11427,6 +11572,10 @@ export interface RuleWithUseControlLabelOptions {
 	level: RulePlainConfiguration;
 	options?: UseControlLabelOptions;
 }
+export interface RuleWithUseConvexAccessControlOptions {
+	level: RulePlainConfiguration;
+	options?: UseConvexAccessControlOptions;
+}
 export interface RuleWithUseDescribeFunctionTitleOptions {
 	/**
 	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
@@ -11450,6 +11599,14 @@ export interface RuleWithUseEarlyContinueOptions {
 	fix?: FixKind;
 	level: RulePlainConfiguration;
 	options?: UseEarlyContinueOptions;
+}
+export interface RuleWithUseElseIfOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: UseElseIfOptions;
 }
 export interface RuleWithUseExhaustiveSwitchCasesOptions {
 	/**
@@ -11603,6 +11760,14 @@ export interface RuleWithUseNamedLayerOptions {
 	level: RulePlainConfiguration;
 	options?: UseNamedLayerOptions;
 }
+export interface RuleWithUseNegativeIndexOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: UseNegativeIndexOptions;
+}
 export interface RuleWithUseNextScriptForGoogleAnalyticsOptions {
 	level: RulePlainConfiguration;
 	options?: UseNextScriptForGoogleAnalyticsOptions;
@@ -11670,6 +11835,14 @@ export interface RuleWithUseReactNativeValidPlatformColorsOptions {
 export interface RuleWithUseRegexpExecOptions {
 	level: RulePlainConfiguration;
 	options?: UseRegexpExecOptions;
+}
+export interface RuleWithUseSetMethodsOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: UseSetMethodsOptions;
 }
 export interface RuleWithUseSetSizeOptions {
 	/**
@@ -14059,6 +14232,7 @@ export type NoArgumentsCallerOrCalleeOptions = {};
 export type NoArrayDeleteOptions = {};
 export type NoArrayForEachOptions = {};
 export type NoArrayMethodsOnArgumentsOptions = {};
+export type NoArrayReduceOptions = {};
 export type NoArraySortForMinMaxOptions = {};
 export type NoAstroComponentDefaultExportOptions = {};
 export type NoAstroConflictingSetDirectivesOptions = {};
@@ -14083,6 +14257,9 @@ export type NoChainedComparisonOptions = {};
 export type NoConfusingArraySpliceOptions = {};
 export type NoConsoleSpacesOptions = {};
 export type NoConstantComparisonsOptions = {};
+export type NoConvexDuplicateIndexesOptions = {};
+export type NoConvexProcessEnvOptions = {};
+export type NoConvexQueryFilterOptions = {};
 export type NoConvexTopOfHourCronsOptions = {};
 export type NoDanglingUnderscoreOptions = {};
 export type NoDisabledAttributeOptions = {};
@@ -14093,6 +14270,7 @@ export interface NoDrizzleDbObjectInsideTransactionOptions {
 	 */
 	drizzleObjectName?: string[];
 }
+export type NoDuplicateExportsOptions = {};
 export type NoDuplicateMapKeysOptions = {};
 export interface NoDuplicateTypeConstituentsOptions {
 	/**
@@ -14279,6 +14457,7 @@ export type NoMissingScssInterpolationOptions = {};
 export type NoMissingThrowOptions = {};
 export type NoMisusedPromisesOptions = {};
 export type NoMisusedSpreadOptions = {};
+export type NoMutableExportsOptions = {};
 export type NoNegatedArrayPredicateOptions = {};
 export type NoNegationInEqualityCheckOptions = {};
 export type NoNestedSwitchOptions = {};
@@ -14465,6 +14644,7 @@ export type NoUselessLengthCheckOptions = {};
 export type NoUselessNestedTernaryOptions = {};
 export type NoUselessParameterPropertyAssignmentOptions = {};
 export type NoUselessQualifierOptions = {};
+export type NoUselessReExportAllOptions = {};
 export type NoUselessRecursionOptions = {};
 export type NoUselessSetConstructionOptions = {};
 export type NoUselessSpliceOptions = {};
@@ -14679,6 +14859,19 @@ export interface UseConsistentBooleanPropsOptions {
 	 */
 	mode?: BooleanPropMode;
 }
+/**
+ * Configures the required declaration style for default-exported functions and classes.
+ */
+export interface UseConsistentDefaultExportStyleOptions {
+	/**
+	 * The declaration style for default-exported classes. Default: `"inline"`.
+	 */
+	classes?: DefaultExportStyle;
+	/**
+	 * The declaration style for default-exported functions. Default: `"inline"`.
+	 */
+	functions?: DefaultExportStyle;
+}
 export type UseConsistentExistenceIndexCheckOptions = {};
 export interface UseConsistentFontWeightNotationOptions {
 	/**
@@ -14747,6 +14940,21 @@ export interface UseConsistentUnicodeBomOptions {
  * Configuration for the `useControlLabel` lint rule.
  */
 export type UseControlLabelOptions = {};
+export interface UseConvexAccessControlOptions {
+	/**
+	 * Names of functions that count as access control functions, in addition to the names
+	 * matched by `prefixes`.
+	 */
+	functions?: string[];
+	/**
+	 * Words that start the name of an access control function. A name matches a prefix when it's
+	 * the prefix on its own, or the prefix followed by an uppercase letter or `_`.
+	 *
+	 * Setting this option replaces the default prefixes: `assert`, `can`, `check`, `ensure`,
+	 * `has` and `require`.
+	 */
+	prefixes?: string[];
+}
 export type UseDescribeFunctionTitleOptions = {};
 export type UseDisposablesOptions = {};
 export interface UseEarlyContinueOptions {
@@ -14756,6 +14964,7 @@ export interface UseEarlyContinueOptions {
 	 */
 	maximumStatements?: number;
 }
+export type UseElseIfOptions = {};
 export interface UseExhaustiveSwitchCasesOptions {
 	/**
 	 * Require a `case` for each value in the union, even when the switch has a `default` clause.
@@ -14835,6 +15044,7 @@ export type UseMathTruncOptions = {};
 export type UseModernMathApisOptions = {};
 export type UseNamedFunctionOptions = {};
 export type UseNamedLayerOptions = {};
+export type UseNegativeIndexOptions = {};
 export type UseNextScriptForGoogleAnalyticsOptions = {};
 /**
  * Options for the `useNullishCoalescing` rule.
@@ -14893,6 +15103,7 @@ export interface UseReactFunctionComponentDefinitionOptions {
 export type UseReactNamingConventionOptions = {};
 export type UseReactNativeValidPlatformColorsOptions = {};
 export type UseRegexpExecOptions = {};
+export type UseSetMethodsOptions = {};
 export type UseSetSizeOptions = {};
 export type UseSimplifiedBooleanReturnOptions = {};
 export interface UseSingleTopLevelHeadingOptions {
@@ -16090,6 +16301,10 @@ export interface BlockLangOptions {
 	required?: boolean;
 }
 export type BooleanPropMode = "implicit" | "explicit";
+/**
+ * Where a default-exported function or class is declared.
+ */
+export type DefaultExportStyle = "inline" | "separate" | "ignore";
 export type FontWeightNotation = "numeric" | "namedWherePossible";
 /**
  * The required form for function definitions: `"expression"` or `"declaration"`.
@@ -16636,6 +16851,7 @@ export type Category =
 	| "lint/nursery/noArrayDelete"
 	| "lint/nursery/noArrayForEach"
 	| "lint/nursery/noArrayMethodsOnArguments"
+	| "lint/nursery/noArrayReduce"
 	| "lint/nursery/noArraySortForMinMax"
 	| "lint/nursery/noAstroComponentDefaultExport"
 	| "lint/nursery/noAstroConflictingSetDirectives"
@@ -16655,6 +16871,9 @@ export type Category =
 	| "lint/nursery/noConfusingArraySplice"
 	| "lint/nursery/noConsoleSpaces"
 	| "lint/nursery/noConstantComparisons"
+	| "lint/nursery/noConvexDuplicateIndexes"
+	| "lint/nursery/noConvexProcessEnv"
+	| "lint/nursery/noConvexQueryFilter"
 	| "lint/nursery/noConvexTopOfHourCrons"
 	| "lint/nursery/noDanglingUnderscore"
 	| "lint/nursery/noDisabledAttribute"
@@ -16662,6 +16881,7 @@ export type Category =
 	| "lint/nursery/noDrizzleDbObjectInsideTransaction"
 	| "lint/nursery/noDrizzleDeleteWithoutWhere"
 	| "lint/nursery/noDrizzleUpdateWithoutWhere"
+	| "lint/nursery/noDuplicateExports"
 	| "lint/nursery/noDuplicateFieldDefinitionNames"
 	| "lint/nursery/noDuplicateMapKeys"
 	| "lint/nursery/noDuplicateSelectors"
@@ -16704,6 +16924,7 @@ export type Category =
 	| "lint/nursery/noMissingThrow"
 	| "lint/nursery/noMisusedPromises"
 	| "lint/nursery/noMisusedSpread"
+	| "lint/nursery/noMutableExports"
 	| "lint/nursery/noNegatedArrayPredicate"
 	| "lint/nursery/noNegationInEqualityCheck"
 	| "lint/nursery/noNestedSwitch"
@@ -16809,6 +17030,7 @@ export type Category =
 	| "lint/nursery/noUselessNestedTernary"
 	| "lint/nursery/noUselessParameterPropertyAssignment"
 	| "lint/nursery/noUselessQualifier"
+	| "lint/nursery/noUselessReExportAll"
 	| "lint/nursery/noUselessRecursion"
 	| "lint/nursery/noUselessSetConstruction"
 	| "lint/nursery/noUselessSplice"
@@ -16903,6 +17125,7 @@ export type Category =
 	| "lint/nursery/useConsistentBlockLang"
 	| "lint/nursery/useConsistentBooleanName"
 	| "lint/nursery/useConsistentBooleanProps"
+	| "lint/nursery/useConsistentDefaultExportStyle"
 	| "lint/nursery/useConsistentExistenceIndexCheck"
 	| "lint/nursery/useConsistentFontWeightNotation"
 	| "lint/nursery/useConsistentFunctionStyle"
@@ -16915,9 +17138,11 @@ export type Category =
 	| "lint/nursery/useConsistentTupleLabels"
 	| "lint/nursery/useConsistentUnicodeBom"
 	| "lint/nursery/useControlLabel"
+	| "lint/nursery/useConvexAccessControl"
 	| "lint/nursery/useDescribeFunctionTitle"
 	| "lint/nursery/useDisposables"
 	| "lint/nursery/useEarlyContinue"
+	| "lint/nursery/useElseIf"
 	| "lint/nursery/useExhaustiveSwitchCases"
 	| "lint/nursery/useExpectEqualityMatcher"
 	| "lint/nursery/useExpectToContain"
@@ -16949,6 +17174,7 @@ export type Category =
 	| "lint/nursery/useNamedCaptureGroup"
 	| "lint/nursery/useNamedFunction"
 	| "lint/nursery/useNamedLayer"
+	| "lint/nursery/useNegativeIndex"
 	| "lint/nursery/useNextScriptForGoogleAnalytics"
 	| "lint/nursery/useNullishCoalescing"
 	| "lint/nursery/useObjectFromEntries"
@@ -16965,6 +17191,7 @@ export type Category =
 	| "lint/nursery/useRegexpExec"
 	| "lint/nursery/useRegexpTest"
 	| "lint/nursery/useScopedStyles"
+	| "lint/nursery/useSetMethods"
 	| "lint/nursery/useSetSize"
 	| "lint/nursery/useSimplifiedBooleanReturn"
 	| "lint/nursery/useSingleTopLevelHeading"
@@ -17854,9 +18081,9 @@ export interface PathIsIgnoredParams {
 	 */
 	features: FeatureName;
 	/**
-	 * Controls how to ignore check should be done
+	 * Controls whether the ignore checks also cover the directories that contain the path.
 	 */
-	ignoreKind?: IgnoreKind;
+	ignoreKind: IgnoreKind;
 	/**
 	 * Whether the path is a directory. Used to skip stat calls when the caller
 	 * already knows the file type from the filesystem traversal.
@@ -17868,7 +18095,6 @@ export interface PathIsIgnoredParams {
 	path: BiomePath;
 	projectKey: ProjectKey;
 }
-export type IgnoreKind = "path" | "ancestors";
 export interface UpdateModuleGraphParams {
 	path: BiomePath;
 	projectKey: ProjectKey;

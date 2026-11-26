@@ -81,6 +81,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
     ));
     result.push((
         "nursery",
+        "noArrayReduce",
+        TypeId::of::<biome_rule_options::no_array_reduce::NoArrayReduceOptions>(),
+    ));
+    result.push((
+        "nursery",
         "noArraySortForMinMax",
         TypeId::of::<biome_rule_options::no_array_sort_for_min_max::NoArraySortForMinMaxOptions>(),
     ));
@@ -295,6 +300,23 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
             biome_rule_options::no_control_characters_in_regex::NoControlCharactersInRegexOptions,
         >(),
     ));
+    result.push((
+        "nursery",
+        "noConvexDuplicateIndexes",
+        TypeId::of::<
+            biome_rule_options::no_convex_duplicate_indexes::NoConvexDuplicateIndexesOptions,
+        >(),
+    ));
+    result.push((
+        "nursery",
+        "noConvexProcessEnv",
+        TypeId::of::<biome_rule_options::no_convex_process_env::NoConvexProcessEnvOptions>(),
+    ));
+    result.push((
+        "nursery",
+        "noConvexQueryFilter",
+        TypeId::of::<biome_rule_options::no_convex_query_filter::NoConvexQueryFilterOptions>(),
+    ));
     result.push(("nursery", "noConvexTopOfHourCrons", TypeId::of::<biome_rule_options::no_convex_top_of_hour_crons::NoConvexTopOfHourCronsOptions>()));
     result.push((
         "security",
@@ -450,6 +472,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         "suspicious",
         "noDuplicateEnumValues",
         TypeId::of::<biome_rule_options::no_duplicate_enum_values::NoDuplicateEnumValuesOptions>(),
+    ));
+    result.push((
+        "nursery",
+        "noDuplicateExports",
+        TypeId::of::<biome_rule_options::no_duplicate_exports::NoDuplicateExportsOptions>(),
     ));
     result.push(("correctness", "noDuplicateFieldDefinitionNames", TypeId::of::<biome_rule_options::no_duplicate_field_definition_names::NoDuplicateFieldDefinitionNamesOptions>()));
     result.push((
@@ -1022,6 +1049,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         "style",
         "noMultilineString",
         TypeId::of::<biome_rule_options::no_multiline_string::NoMultilineStringOptions>(),
+    ));
+    result.push((
+        "nursery",
+        "noMutableExports",
+        TypeId::of::<biome_rule_options::no_mutable_exports::NoMutableExportsOptions>(),
     ));
     result.push((
         "style",
@@ -2058,6 +2090,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
     ));
     result.push((
         "nursery",
+        "noUselessReExportAll",
+        TypeId::of::<biome_rule_options::no_useless_re_export_all::NoUselessReExportAllOptions>(),
+    ));
+    result.push((
+        "nursery",
         "noUselessRecursion",
         TypeId::of::<biome_rule_options::no_useless_recursion::NoUselessRecursionOptions>(),
     ));
@@ -2705,6 +2742,7 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
             biome_rule_options::use_consistent_curly_braces::UseConsistentCurlyBracesOptions,
         >(),
     ));
+    result.push(("nursery", "useConsistentDefaultExportStyle", TypeId::of::<biome_rule_options::use_consistent_default_export_style::UseConsistentDefaultExportStyleOptions>()));
     result.push((
         "style",
         "useConsistentEnumValueType",
@@ -2767,6 +2805,12 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         TypeId::of::<biome_rule_options::use_control_label::UseControlLabelOptions>(),
     ));
     result.push((
+        "nursery",
+        "useConvexAccessControl",
+        TypeId::of::<biome_rule_options::use_convex_access_control::UseConvexAccessControlOptions>(
+        ),
+    ));
+    result.push((
         "complexity",
         "useDateNow",
         TypeId::of::<biome_rule_options::use_date_now::UseDateNowOptions>(),
@@ -2826,6 +2870,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         "nursery",
         "useEarlyContinue",
         TypeId::of::<biome_rule_options::use_early_continue::UseEarlyContinueOptions>(),
+    ));
+    result.push((
+        "nursery",
+        "useElseIf",
+        TypeId::of::<biome_rule_options::use_else_if::UseElseIfOptions>(),
     ));
     result.push((
         "style",
@@ -3215,6 +3264,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         "useNamingConvention",
         TypeId::of::<biome_rule_options::use_naming_convention::UseNamingConventionOptions>(),
     ));
+    result.push((
+        "nursery",
+        "useNegativeIndex",
+        TypeId::of::<biome_rule_options::use_negative_index::UseNegativeIndexOptions>(),
+    ));
     result.push(("nursery", "useNextScriptForGoogleAnalytics", TypeId::of::<biome_rule_options::use_next_script_for_google_analytics::UseNextScriptForGoogleAnalyticsOptions>()));
     result.push((
         "style",
@@ -3399,6 +3453,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         "a11y",
         "useSemanticElements",
         TypeId::of::<biome_rule_options::use_semantic_elements::UseSemanticElementsOptions>(),
+    ));
+    result.push((
+        "nursery",
+        "useSetMethods",
+        TypeId::of::<biome_rule_options::use_set_methods::UseSetMethodsOptions>(),
     ));
     result.push((
         "nursery",

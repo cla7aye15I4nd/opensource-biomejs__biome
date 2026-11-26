@@ -125,7 +125,7 @@ pub struct SupportsFeatureParams {
     pub features: FeatureName,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub inline_config: Option<Configuration>,
+    pub inline_config: Option<Box<Configuration>>,
 
     #[serde(default, skip_serializing_if = "is_false")]
     pub skip_ignore_check: bool,
@@ -133,6 +133,9 @@ pub struct SupportsFeatureParams {
     /// Features that shouldn't be enabled
     #[serde(default, skip_serializing_if = "FeatureName::is_empty")]
     pub not_requested_features: FeatureName,
+
+    /// Controls whether the ignore checks also cover the directories that contain the file.
+    pub ignore_kind: IgnoreKind,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, Default)]
@@ -837,7 +840,7 @@ pub struct OpenFileParams {
     pub persist_node_cache: bool,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub inline_config: Option<Configuration>,
+    pub inline_config: Option<Box<Configuration>>,
 
     /// Used to enable further document services e.g. semantic model
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -981,7 +984,7 @@ pub struct ChangeFileParams {
     pub version: i32,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub inline_config: Option<Configuration>,
+    pub inline_config: Option<Box<Configuration>>,
 
     /// Used to enable further document services e.g. semantic model
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1040,7 +1043,7 @@ pub struct PullDiagnosticsParams {
     #[serde(default)]
     pub include_code_fix: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub inline_config: Option<Configuration>,
+    pub inline_config: Option<Box<Configuration>>,
 
     /// Max limit of diagnostics types to pull. This limit is meant to cap the number of [Diagnostic] to pull.
     /// However, the workspace still processes ALL diagnostics coming from the analyzer to compute their severity.
@@ -1136,7 +1139,7 @@ pub struct PullActionsParams {
     #[serde(default)]
     pub categories: RuleCategories,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub inline_config: Option<Configuration>,
+    pub inline_config: Option<Box<Configuration>>,
     /// When `false`, returned actions have `suggestion: None` (no `BatchMutation`
     /// computed). Used by `codeAction/resolve` to defer edit computation.
     #[serde(default = "default_true")]
@@ -1162,7 +1165,7 @@ pub struct PullDiagnosticsAndActionsParams {
     #[serde(default)]
     pub categories: RuleCategories,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub inline_config: Option<Configuration>,
+    pub inline_config: Option<Box<Configuration>>,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
@@ -1199,7 +1202,7 @@ pub struct FormatFileParams {
     pub project_key: ProjectKey,
     pub path: BiomePath,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub inline_config: Option<Configuration>,
+    pub inline_config: Option<Box<Configuration>>,
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
@@ -1210,7 +1213,7 @@ pub struct FormatRangeParams {
     pub path: BiomePath,
     pub range: TextRange,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub inline_config: Option<Configuration>,
+    pub inline_config: Option<Box<Configuration>>,
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
@@ -1221,7 +1224,7 @@ pub struct FormatOnTypeParams {
     pub path: BiomePath,
     pub offset: TextSize,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub inline_config: Option<Configuration>,
+    pub inline_config: Option<Box<Configuration>>,
 }
 
 #[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize, PartialEq)]
@@ -1256,7 +1259,7 @@ pub struct FixFileParams {
     #[serde(default)]
     pub suppression_reason: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub inline_config: Option<Configuration>,
+    pub inline_config: Option<Box<Configuration>>,
 }
 
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
@@ -1525,20 +1528,29 @@ pub struct PathIsIgnoredParams {
     /// Whether the path is ignored for specific features e.g. `formatter.includes`.
     /// When this field is empty, Biome checks only `files.includes`.
     pub features: FeatureName,
-    #[serde(default)]
-    /// Controls how to ignore check should be done
+    /// Controls whether the ignore checks also cover the directories that contain the path.
     pub ignore_kind: IgnoreKind,
 }
-#[derive(Clone, Debug, Default, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
+
+/// Selects which paths an ignore check matches against the `files.includes` patterns and the
+/// version control ignore files.
+#[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub enum IgnoreKind {
-    /// Checks whether a path itself is explicitly ignored only.
-    #[default]
+    /// Checks only the path itself.
+    ///
+    /// Use this only when every directory that contains the path was already checked and wasn't
+    /// ignored, for example while walking a directory tree from the top. Otherwise, a file inside
+    /// an ignored directory is reported as not ignored.
+    ///
+    /// The folder that contains a nested configuration file is the exception: its parent
+    /// directories are also checked against the `files.includes` of that configuration, because
+    /// they were checked against different settings.
     Path,
 
-    /// Checks whether a path itself or one of its ancestors is ignored,
-    /// up to the root path of the current project.
+    /// Checks the path itself and each directory that contains it, up to the root of the
+    /// project.
     Ancestors,
 }
 
