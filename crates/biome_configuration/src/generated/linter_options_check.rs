@@ -36,6 +36,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         "noAmbiguousAnchorText",
         TypeId::of::<biome_rule_options::no_ambiguous_anchor_text::NoAmbiguousAnchorTextOptions>(),
     ));
+    result.push((
+        "nursery",
+        "noAmd",
+        TypeId::of::<biome_rule_options::no_amd::NoAmdOptions>(),
+    ));
     result.push(("suspicious", "noApproximativeNumericConstant", TypeId::of::<biome_rule_options::no_approximative_numeric_constant::NoApproximativeNumericConstantOptions>()));
     result.push((
         "complexity",
@@ -490,6 +495,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         TypeId::of::<biome_rule_options::no_duplicate_font_names::NoDuplicateFontNamesOptions>(),
     ));
     result.push(("suspicious", "noDuplicateGraphqlOperationName", TypeId::of::<biome_rule_options::no_duplicate_graphql_operation_name::NoDuplicateGraphqlOperationNameOptions>()));
+    result.push((
+        "nursery",
+        "noDuplicateIfBranches",
+        TypeId::of::<biome_rule_options::no_duplicate_if_branches::NoDuplicateIfBranchesOptions>(),
+    ));
     result.push((
         "correctness",
         "noDuplicateInputFieldNames",
@@ -1658,6 +1668,13 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
         >(),
     ));
     result.push(("nursery", "noTailwindConflictingClasses", TypeId::of::<biome_rule_options::no_tailwind_conflicting_classes::NoTailwindConflictingClassesOptions>()));
+    result.push((
+        "nursery",
+        "noTailwindLegacyImportant",
+        TypeId::of::<
+            biome_rule_options::no_tailwind_legacy_important::NoTailwindLegacyImportantOptions,
+        >(),
+    ));
     result.push((
         "nursery",
         "noTailwindLegacyUtilities",

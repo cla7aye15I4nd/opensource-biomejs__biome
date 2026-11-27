@@ -2964,6 +2964,11 @@ export interface Nursery {
 	 */
 	noAccidentalBitwiseOperators?: NoAccidentalBitwiseOperatorsConfiguration;
 	/**
+	 * Disallow AMD require() and define() calls.
+	 * See https://biomejs.dev/linter/rules/no-amd
+	 */
+	noAmd?: NoAmdConfiguration;
+	/**
 	 * Disallow the use of arguments.caller and arguments.callee.
 	 * See https://biomejs.dev/linter/rules/no-arguments-caller-or-callee
 	 */
@@ -3113,6 +3118,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/no-duplicate-exports
 	 */
 	noDuplicateExports?: NoDuplicateExportsConfiguration;
+	/**
+	 * Disallow two branches next to each other in an if statement from running the same code.
+	 * See https://biomejs.dev/linter/rules/no-duplicate-if-branches
+	 */
+	noDuplicateIfBranches?: NoDuplicateIfBranchesConfiguration;
 	/**
 	 * Disallow two keys with the same name inside YAML maps.
 	 * See https://biomejs.dev/linter/rules/no-duplicate-map-keys
@@ -3553,6 +3563,11 @@ export interface Nursery {
 	 * See https://biomejs.dev/linter/rules/no-tailwind-conflicting-classes
 	 */
 	noTailwindConflictingClasses?: NoTailwindConflictingClassesConfiguration;
+	/**
+	 * Disallow the leading ! important modifier in Tailwind CSS classes.
+	 * See https://biomejs.dev/linter/rules/no-tailwind-legacy-important
+	 */
+	noTailwindLegacyImportant?: NoTailwindLegacyImportantConfiguration;
 	/**
 	 * Disallow Tailwind CSS utility classes that Tailwind CSS only keeps for backward compatibility.
 	 * See https://biomejs.dev/linter/rules/no-tailwind-legacy-utilities
@@ -7007,6 +7022,7 @@ export type UseYieldConfiguration =
 export type NoAccidentalBitwiseOperatorsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoAccidentalBitwiseOperatorsOptions;
+export type NoAmdConfiguration = RulePlainConfiguration | RuleWithNoAmdOptions;
 export type NoArgumentsCallerOrCalleeConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoArgumentsCallerOrCalleeOptions;
@@ -7097,6 +7113,9 @@ export type NoDrizzleDbObjectInsideTransactionConfiguration =
 export type NoDuplicateExportsConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoDuplicateExportsOptions;
+export type NoDuplicateIfBranchesConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoDuplicateIfBranchesOptions;
 export type NoDuplicateMapKeysConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoDuplicateMapKeysOptions;
@@ -7361,6 +7380,9 @@ export type NoTailwindArbitraryValueConfiguration =
 export type NoTailwindConflictingClassesConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoTailwindConflictingClassesOptions;
+export type NoTailwindLegacyImportantConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoTailwindLegacyImportantOptions;
 export type NoTailwindLegacyUtilitiesConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoTailwindLegacyUtilitiesOptions;
@@ -10224,6 +10246,10 @@ export interface RuleWithNoAccidentalBitwiseOperatorsOptions {
 	level: RulePlainConfiguration;
 	options?: NoAccidentalBitwiseOperatorsOptions;
 }
+export interface RuleWithNoAmdOptions {
+	level: RulePlainConfiguration;
+	options?: NoAmdOptions;
+}
 export interface RuleWithNoArgumentsCallerOrCalleeOptions {
 	level: RulePlainConfiguration;
 	options?: NoArgumentsCallerOrCalleeOptions;
@@ -10379,6 +10405,10 @@ export interface RuleWithNoDrizzleDbObjectInsideTransactionOptions {
 export interface RuleWithNoDuplicateExportsOptions {
 	level: RulePlainConfiguration;
 	options?: NoDuplicateExportsOptions;
+}
+export interface RuleWithNoDuplicateIfBranchesOptions {
+	level: RulePlainConfiguration;
+	options?: NoDuplicateIfBranchesOptions;
 }
 export interface RuleWithNoDuplicateMapKeysOptions {
 	level: RulePlainConfiguration;
@@ -10835,6 +10865,14 @@ export interface RuleWithNoTailwindArbitraryValueOptions {
 export interface RuleWithNoTailwindConflictingClassesOptions {
 	level: RulePlainConfiguration;
 	options?: NoTailwindConflictingClassesOptions;
+}
+export interface RuleWithNoTailwindLegacyImportantOptions {
+	/**
+	 * Controls the applicability of the rule's fix. `none` suppresses the fix, while `safe` and `unsafe` reclassify its applicability. This setting does not change the fix itself.
+	 */
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: NoTailwindLegacyImportantOptions;
 }
 export interface RuleWithNoTailwindLegacyUtilitiesOptions {
 	/**
@@ -14228,6 +14266,7 @@ export type UseVueValidVPreOptions = {};
 export type UseVueValidVTextOptions = {};
 export type UseYieldOptions = {};
 export type NoAccidentalBitwiseOperatorsOptions = {};
+export type NoAmdOptions = {};
 export type NoArgumentsCallerOrCalleeOptions = {};
 export type NoArrayDeleteOptions = {};
 export type NoArrayForEachOptions = {};
@@ -14271,6 +14310,7 @@ export interface NoDrizzleDbObjectInsideTransactionOptions {
 	drizzleObjectName?: string[];
 }
 export type NoDuplicateExportsOptions = {};
+export type NoDuplicateIfBranchesOptions = {};
 export type NoDuplicateMapKeysOptions = {};
 export interface NoDuplicateTypeConstituentsOptions {
 	/**
@@ -14552,6 +14592,7 @@ export interface NoTailwindArbitraryValueOptions {
 	allowedClasses?: string[];
 }
 export type NoTailwindConflictingClassesOptions = {};
+export type NoTailwindLegacyImportantOptions = {};
 export type NoTailwindLegacyUtilitiesOptions = {};
 export interface NoTailwindRawColorsOptions {
 	/**
@@ -16847,6 +16888,7 @@ export type Category =
 	| "lint/correctness/useVueValidVText"
 	| "lint/correctness/useYield"
 	| "lint/nursery/noAccidentalBitwiseOperators"
+	| "lint/nursery/noAmd"
 	| "lint/nursery/noArgumentsCallerOrCallee"
 	| "lint/nursery/noArrayDelete"
 	| "lint/nursery/noArrayForEach"
@@ -16883,6 +16925,7 @@ export type Category =
 	| "lint/nursery/noDrizzleUpdateWithoutWhere"
 	| "lint/nursery/noDuplicateExports"
 	| "lint/nursery/noDuplicateFieldDefinitionNames"
+	| "lint/nursery/noDuplicateIfBranches"
 	| "lint/nursery/noDuplicateMapKeys"
 	| "lint/nursery/noDuplicateSelectors"
 	| "lint/nursery/noDuplicateTypeConstituents"
@@ -16991,6 +17034,7 @@ export type Category =
 	| "lint/nursery/noSyncMethods"
 	| "lint/nursery/noTailwindArbitraryValue"
 	| "lint/nursery/noTailwindConflictingClasses"
+	| "lint/nursery/noTailwindLegacyImportant"
 	| "lint/nursery/noTailwindLegacyUtilities"
 	| "lint/nursery/noTailwindRawColors"
 	| "lint/nursery/noTailwindRestrictedClasses"
